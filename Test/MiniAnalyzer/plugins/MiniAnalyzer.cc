@@ -1,8 +1,6 @@
 #include <map>
 #include <string>
-
 #include "TH1.h"
-
 #include "FWCore/Framework/interface/Frameworkfwd.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/EDAnalyzer.h"
@@ -94,16 +92,10 @@
 #include "DataFormats/MuonReco/interface/MuonFwd.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 #include "DataFormats/PatCandidates/interface/GenericParticle.h"
-
 #include "RecoVertex/VertexPrimitives/interface/BasicSingleVertexState.h"
 #include "RecoVertex/VertexPrimitives/interface/VertexState.h"
-
-
-
 #include "TLorentzVector.h"
 #include <TTree.h>
-
-
 
 const int MUONMINUS_PDG_ID = 13;
 const int KAONPLUS_PDG_ID = 321;
@@ -127,12 +119,12 @@ private:
   virtual void beginJob() ;
   virtual void analyze(const edm::Event&, const edm::EventSetup&);
   virtual void endJob() ;
-
+  
   void clearVariables();
   void calLS (double, double, double, double, double, double, double,
               double, double,  double, double, double, double, double,
               double, double, double, double, double*, double*);
-
+  
   void calCosAlpha (double, double, double, double, double,
                     double, double, double, double, double,
                     double, double, double, double,
@@ -154,7 +146,7 @@ private:
   ParticleMass MuonMass_;
   float MuonMassErr_;
   double BsMass_;
-
+  
   
   // ----------member data ---------------------------    
   edm::EDGetTokenT<reco::BeamSpot> bsCollToken; 
@@ -174,7 +166,7 @@ private:
   edm::InputTag muonSrc_;
   edm::InputTag photonSrc_;
   edm::InputTag trkSrc_;
-
+  
   //---------------------                                                                                                   
   // pre-selection cuts                                                                                                  
   //---------------------                                                                                                 
@@ -214,57 +206,18 @@ private:
   std::vector<float>  pvY_;
   std::vector<float>  pvZ_;
   
-  // gen variables
-  Int_t dimuon_pdgId;
-  TLorentzVector gen_dimuon_p4;
-  TLorentzVector gen_muonP_p4;
-  TLorentzVector gen_muonM_p4;
-  TLorentzVector gen_photon_p4;
- 
-  Int_t              ngenBs_; 
-  std::vector<float> genbPt_;
-  std::vector<float> genbEta_;
-  std::vector<float> genbRap_;
-  std::vector<float> genbPhi_;
-  std::vector<float> genbMass_;
-  std::vector<int>   genbPID_;
+  int truth_nMuon, truth_nMuPos, truth_nMuNeg, truth_nPhoton, truth_nBs;
+  std::vector<double> truth_Bsmuon_pt, truth_Bsmuon_eta, truth_Bsmuon_phi;
+  std::vector<double> truth_Bsphoton_pt, truth_Bsphoton_eta, truth_Bsphoton_phi;
+  std::vector<double> truth_Bs_pt, truth_Bs_eta, truth_Bs_phi, truth_Bs_mass;
+  std::vector<double> truth_Bs_pdgid, truth_Bsmuon_pdgid;
   
-  std::vector<float> genbPx_;
-  std::vector<float> genbPy_;
-  std::vector<float> genbPz_;
-  
-  Int_t              ngenPhoton_; 
-  std::vector<float> genphoPt_;
-  std::vector<float> genphoEta_;
-  std::vector<float> genphoRap_;
-  std::vector<float> genphoPhi_;
-  std::vector<float> genphoPx_;
-  std::vector<float> genphoPy_;
-  std::vector<float> genphoPz_;
-  std::vector<float> genphoVtxx_;
-  std::vector<float> genphoVtxy_;
-  std::vector<float> genphoVtxz_;
-
-  Int_t              ngenMMu_; 
-  std::vector<float> genmumPt_;
-  std::vector<float> genmumEta_;
-  std::vector<float> genmumRap_;
-  std::vector<float> genmumPhi_;
-
-  Int_t              ngenPMu_; 
-  std::vector<float> genmupPt_;
-  std::vector<float> genmupEta_;
-  std::vector<float> genmupRap_;
-  std::vector<float> genmupPhi_;
-  
-
   // reco::Photon
   Int_t          nPho_;
   std::vector<float>  phoE_;
   std::vector<float>  phoEt_;
   std::vector<float>  phoEta_;
   std::vector<float>  phoPhi_;
-  
   
   // reco::Muon
   Int_t          nMu_;
@@ -278,7 +231,7 @@ private:
   std::vector<float>  mumuPt_;
   std::vector<float>  mumuRapidity_;
   std::vector<float>  mumuMass_; 
-
+  
   std::vector<float>  mumuLSBS_;
   std::vector<float>  mumuLSBSErr_;
   std::vector<float>  mumuDCA_;
@@ -287,16 +240,13 @@ private:
 
 
 MiniAnalyzer::MiniAnalyzer(const edm::ParameterSet& iConfig):
-
+  
   histContainer_(),
 
   //IsMonteCarlo_(iConfig.getUntrackedParameter<bool>("IsMonteCarlo")),
- // particle properties                            
-  
-            
+  // particle properties                            
   MuonMass_(iConfig.getUntrackedParameter<double>("MuonMass")),
   MuonMassErr_(iConfig.getUntrackedParameter<double>("MuonMassErr")),
-
   BsMass_(iConfig.getUntrackedParameter<double>("BsMass")),
   
   bsSrc_(iConfig.getUntrackedParameter<edm::InputTag>("bsSrc")),
@@ -306,19 +256,16 @@ MiniAnalyzer::MiniAnalyzer(const edm::ParameterSet& iConfig):
   muonSrc_(iConfig.getUntrackedParameter<edm::InputTag>("muonSrc")),
   photonSrc_(iConfig.getUntrackedParameter<edm::InputTag>("photonSrc")),
   trkSrc_(iConfig.getUntrackedParameter<edm::InputTag>("trkSrc")),
-
- // pre-selection cuts                                                                                                                 
+  
+  // pre-selection cuts                                                                                                                 
   MuonMinPt_(iConfig.getUntrackedParameter<double>("MuonMinPt")),
   MuonMaxEta_(iConfig.getUntrackedParameter<double>("MuonMaxEta")),
   MuonMaxDcaBs_(iConfig.getUntrackedParameter<double>("MuonMaxDcaBs")),
-
-
+  
   MuMuMaxDca_(iConfig.getUntrackedParameter<double>("MuMuMaxDca")),
   MuMuMinVtxCl_(iConfig.getUntrackedParameter<double>("MuMuMinVtxCl")),
   MuMuMinLxySigmaBs_(iConfig.getUntrackedParameter<double>("MuMuMinLxySigmaBs")),
   MuMuMinCosAlphaBs_(iConfig.getUntrackedParameter<double>("MuMuMinCosAlphaBs")),
-
-
   BsMinVtxCl_(iConfig.getUntrackedParameter<double>("BsMinVtxCl")),
   BsMinMass_(iConfig.getUntrackedParameter<double>("BsMinMass")),
   BsMaxMass_(iConfig.getUntrackedParameter<double>("BsMaxMass")){
@@ -332,7 +279,7 @@ MiniAnalyzer::MiniAnalyzer(const edm::ParameterSet& iConfig):
   photonCollToken = consumes<pat::PhotonCollection>(photonSrc_);
   trkCollToken    = consumes<edm::View<pat::PackedCandidate>>(trkSrc_);
   
-
+  
   // initialize output TTree
   edm::Service<TFileService> fs;
   tree_ = fs->make<TTree>("EventTree", "Event data");
@@ -349,45 +296,24 @@ MiniAnalyzer::MiniAnalyzer(const edm::ParameterSet& iConfig):
   tree_->Branch("pvY",             &pvY_);
   tree_->Branch("pvZ",             &pvZ_);
   
-
-  tree_->Branch("ngenBs",       &ngenBs_);
-  tree_->Branch("genbPt",       &genbPt_);
-  tree_->Branch("genbEta",      &genbEta_);
-  tree_->Branch("genbRap",      &genbRap_);
-  tree_->Branch("genbPhi",      &genbPhi_);
-  tree_->Branch("genbMass",     &genbMass_);
-  tree_->Branch("genbPID",      &genbPID_);
-
-  tree_->Branch("genbPx",      &genbPx_);
-  tree_->Branch("genbPy",      &genbPy_);
-  tree_->Branch("genbPz",      &genbPz_);
-
-  tree_->Branch("ngenPhoton",   &ngenPhoton_);
-  tree_->Branch("genphoPt",     &genphoPt_);
-  tree_->Branch("genphoEta",    &genphoEta_);
-  tree_->Branch("genphoRap",    &genphoRap_);
-  tree_->Branch("genphoPhi",    &genphoPhi_);
-
-  tree_->Branch("genphoPx",    &genphoPx_);
-  tree_->Branch("genphoPy",    &genphoPy_);
-  tree_->Branch("genphoPz",    &genphoPz_);
-  tree_->Branch("genphoVtxx",  &genphoVtxx_);
-  tree_->Branch("genphoVtxy",  &genphoVtxy_);
-  tree_->Branch("genphoVtxz",  &genphoVtxz_);
-
-  tree_->Branch("ngenMMu",     &ngenMMu_);
-  tree_->Branch("genmumPt",    &genmumPt_);
-  tree_->Branch("genmumEta",   &genmumEta_);
-  tree_->Branch("genmumRap",   &genmumRap_);
-  tree_->Branch("genmumPhi",   &genmumPhi_);
-
-  tree_->Branch("ngenPMu",     &ngenPMu_);
-  tree_->Branch("genmupPt",    &genmupPt_);
-  tree_->Branch("genmupEta",   &genmupEta_);
-  tree_->Branch("genmupRap",   &genmupRap_);
-  tree_->Branch("genmupPhi",   &genmupPhi_);
+  tree_->Branch("truth_nMuon"    ,  &truth_nMuon);
+  tree_->Branch("truth_nMuPos"   ,  &truth_nMuPos);
+  tree_->Branch("truth_nMuNeg"   ,  &truth_nMuNeg);
+  tree_->Branch("truth_nPhoton"  ,  &truth_nPhoton);
+  tree_->Branch("truth_nBs"      ,  &truth_nBs);
+  tree_->Branch("truth_Bsmuon_pt",  &truth_Bsmuon_pt);
+  tree_->Branch("truth_Bsmuon_eta", &truth_Bsmuon_eta);
+  tree_->Branch("truth_Bsmuon_phi", &truth_Bsmuon_phi);
+  tree_->Branch("truth_Bsmuon_pdgid", &truth_Bsmuon_pdgid);
+  tree_->Branch("truth_Bsphoton_pt",  &truth_Bsphoton_pt);
+  tree_->Branch("truth_Bsphoton_eta", &truth_Bsphoton_eta);
+  tree_->Branch("truth_Bsphoton_phi", &truth_Bsphoton_phi);
+  tree_->Branch("truth_Bs_pt",   &truth_Bs_pt);
+  tree_->Branch("truth_Bs_eta",  &truth_Bs_eta);
+  tree_->Branch("truth_Bs_phi",  &truth_Bs_phi);
+  tree_->Branch("truth_Bs_mass", &truth_Bs_mass);
+  tree_->Branch("truth_Bs_pdgid", &truth_Bs_pdgid);
   
- 
   tree_->Branch("nPho",                  &nPho_);
   tree_->Branch("phoE",                  &phoE_);
   tree_->Branch("phoEt",                 &phoEt_);
@@ -401,8 +327,6 @@ MiniAnalyzer::MiniAnalyzer(const edm::ParameterSet& iConfig):
   tree_->Branch("muCharge",              &muCharge_);
   tree_->Branch("muType",                &muType_);
   tree_->Branch("muIsGood",              &muIsGood_);
-  
-  tree_->Branch("dimuon_pdgId",  &dimuon_pdgId,     "dimuon_pdgId/I");
   tree_->Branch("mumuPt",                &mumuPt_);
   tree_->Branch("mumuRapidity",          &mumuRapidity_);
   tree_->Branch("mumuMass",              &mumuMass_);
@@ -429,45 +353,18 @@ void MiniAnalyzer::clearVariables(){
   pvY_                  .clear();
   pvZ_                  .clear();
 
-  ngenBs_ = 0;
-  genbPt_      .clear();
-  genbEta_     .clear();
-  genbRap_     .clear();
-  genbPhi_     .clear();
-  genbMass_    .clear();
-  genbPID_     .clear();
-
-  genbPx_      .clear();
-  genbPy_      .clear();
-  genbPz_      .clear();
- 
-  ngenPhoton_ = 0; 
-  genphoPt_    .clear();
-  genphoEta_   .clear();
-  genphoRap_   .clear();
-  genphoPhi_   .clear();
-
-  genphoPx_    .clear();
-  genphoPy_    .clear();
-  genphoPz_    .clear();
-  genphoVtxx_  .clear();
-  genphoVtxy_  .clear();
-  genphoVtxz_  .clear();
-
-  ngenMMu_ = 0;   
-  genmumPt_      .clear();
-  genmumEta_     .clear();
-  genmumRap_     .clear();
-  genmumPhi_     .clear();
-
-  ngenPMu_ = 0;   
-  genmupPt_      .clear();
-  genmupEta_     .clear();
-  genmupRap_     .clear();
-  genmupPhi_     .clear();
+  truth_nMuon=0; truth_nMuPos = 0; truth_nMuNeg = 0; truth_nPhoton = 0; truth_nBs = 0;
+  truth_Bsmuon_pt.clear(); 
+  truth_Bsmuon_eta.clear();
+  truth_Bsmuon_phi.clear();
+  truth_Bsmuon_pdgid.clear();
+  truth_Bs_pt.clear(); truth_Bs_eta.clear(); truth_Bs_phi.clear(); truth_Bs_mass.clear();
+  truth_Bsphoton_pt.clear(); 
+  truth_Bsphoton_eta.clear();
+  truth_Bsphoton_phi.clear();
   
-
-
+  truth_Bs_pdgid.clear();  
+  
   nPho_ = 0;
   phoE_                 .clear();
   phoEt_                .clear();
@@ -539,7 +436,7 @@ MiniAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup){
   // fill pat muon- histograms
   for(View<pat::Muon>::const_iterator iMuon1 = muons->begin(); iMuon1 != muons->end(); ++iMuon1){
     for(View<pat::Muon>::const_iterator iMuon2 = iMuon1+1; iMuon2 != muons->end(); ++iMuon2) {
-
+      
       if(iMuon1==iMuon2) continue;
       if( muons->size() < 2 || iMuon1->pt() < MuonMinPt_ || iMuon2->pt() < MuonMinPt_ ) continue;
       //opposite charge 
@@ -641,30 +538,21 @@ MiniAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup){
       
       double J_Prob_tmp   = TMath::Prob(psi_vFit_vertex_noMC->chiSquared(),(int)psi_vFit_vertex_noMC->degreesOfFreedom());
       mumuVtxCl_ .push_back(J_Prob_tmp);
-      //if(J_Prob_tmp<0.01)
-      //	{
-      //	  continue;
-      //	}
+     
+      // compute the distance between mumu vtx and beam spot
+      calLS (psi_vFit_vertex_noMC->position().x(),psi_vFit_vertex_noMC->position().y(),0.0,
+	     beamSpot_.position().x(),beamSpot_.position().y(),0.0,
+	     psi_vFit_vertex_noMC->error().cxx(),psi_vFit_vertex_noMC->error().cyy(),0.0,
+	     psi_vFit_vertex_noMC->error().matrix()(0,1),0.0,0.0,
+	     beamSpot_.covariance()(0,0),beamSpot_.covariance()(1,1),0.0,
+	     beamSpot_.covariance()(0,1),0.0,0.0,
+	     &MuMuLSBS,&MuMuLSBSErr);
       
-      
-
-  // compute the distance between mumu vtx and beam spot
-  calLS (psi_vFit_vertex_noMC->position().x(),psi_vFit_vertex_noMC->position().y(),0.0,
-	 beamSpot_.position().x(),beamSpot_.position().y(),0.0,
-	 psi_vFit_vertex_noMC->error().cxx(),psi_vFit_vertex_noMC->error().cyy(),0.0,
-	 psi_vFit_vertex_noMC->error().matrix()(0,1),0.0,0.0,
-	 beamSpot_.covariance()(0,0),beamSpot_.covariance()(1,1),0.0,
-	 beamSpot_.covariance()(0,1),0.0,0.0,
-	 &MuMuLSBS,&MuMuLSBSErr);
-
       mumuLSBS_.push_back(MuMuLSBS);      
       mumuLSBSErr_.push_back(MuMuLSBSErr);      
-      
 
       reco::TrackRef muTrackm = iMuon1->innerTrack();
       if ( muTrackm.isNull() ) continue;
-      
-
       
       muPt_    .push_back(iMuon1->pt());
       muEta_   .push_back(iMuon1->eta());
@@ -675,8 +563,6 @@ MiniAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup){
       histContainer_["muonPt"] ->Fill(iMuon1->pt());
       histContainer_["muonEta"]->Fill(iMuon1->eta());
       histContainer_["muonPhi"]->Fill(iMuon1->phi());
-      
-      
       
       reco::TrackRef muTrackp = iMuon2->innerTrack();
       if ( muTrackp.isNull()) continue;
@@ -689,26 +575,18 @@ MiniAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup){
       TLorentzVector mup, mum, dimu;
       mup.SetPtEtaPhiM(iMuon2->pt(),iMuon2->eta(),iMuon2->phi(),iMuon2->mass());
       mum.SetPtEtaPhiM(iMuon1->pt(),iMuon1->eta(),iMuon1->phi(),iMuon1->mass());
-      
       dimu = mup+mum;
       mumuPt_.push_back(dimu.Pt());      
       mumuRapidity_.push_back(dimu.Rapidity());      
       mumuMass_.push_back(dimu.M());      
-
       histContainer_["muonPt"] ->Fill(iMuon2->pt());
       histContainer_["muonEta"]->Fill(iMuon2->eta());
       histContainer_["muonPhi"]->Fill(iMuon2->phi());
-      
       histContainer_["mumuMass"]->Fill(dimu.M());
       histContainer_["mumupt"]->Fill(dimu.Pt());
-
-
-
+      nMu_++;
     } // +mu
   } //-mu
-  
-  
-  
   
   // get pat photon collection 
   edm::Handle< std::vector<pat::Photon>> photons;
@@ -721,19 +599,17 @@ MiniAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup){
     phoEta_           .push_back(pho->eta());
     phoPhi_           .push_back(pho->phi()); 
     nPho_++;
-    
     histContainer_["phoPt"] ->Fill(pho->pt());
     histContainer_["phoEta"]->Fill(pho->eta());
     histContainer_["phoPhi"]->Fill(pho->phi());    
   }
-  
   // Multiplicity
   histContainer_["phoMult" ]->Fill(photons->size());
   histContainer_["muonMult"]->Fill(muons->size() );
- 
+  
   //if (!hasBeamSpot(iEvent))continue;
   //if (!hasPrimaryVertex(iEvent)) continue;
-   
+  
   tree_->Fill();
   clearVariables();
 }
@@ -743,10 +619,6 @@ MiniAnalyzer::beginJob()
 {
   // register to the TFileService
   edm::Service<TFileService> fs;
-  
- 
-
-
   histContainer_["mumuMass"]=fs->make<TH1F>("mumuMass", "mass",    90,   0, 120.);
   histContainer_["mumupt"]=fs->make<TH1F>( "mumupt", "#mu^{+}#mu^{-} pT ; pT [GeV]", 100, 0, 50);
   
@@ -896,95 +768,79 @@ void MiniAnalyzer::saveGenInfo(const edm::Event& iEvent){
   edm::Handle<edm::View<reco::GenParticle>> pruned;
   iEvent.getByToken(prunedCollToken,pruned);
   
-  // Packed particles are all the status 1, so usable to remake jets
-  // The navigation from status 1 to pruned is possible (the other direction should be made by hand)
-  edm::Handle<edm::View<pat::PackedGenParticle>> packed;
-  iEvent.getByToken(genCollToken, packed);
+  int BS = 531;
+  int MUON = 13;
+  int ANTIMUON = -13;
+  int PHOTON = 22;
   
+  bool found_mu = false;
+  bool found_anti_mu = false;
+  bool found_photon = false;
   
-  if (packed.isValid() && pruned.isValid()) {
-    dimuon_pdgId  = 0;
-    gen_dimuon_p4.SetPtEtaPhiM(0.,0.,0.,0.);
-    int foundit   = 0;
-    int ngenPosMu=0;      int ngenNegMu=0;     int ngenPhoton=0; int ngenBs=0;
+  for(unsigned int i = 0; i < pruned->size(); ++i) {
+    const reco::GenParticle & gen_particle = (*pruned)[i];                                             
+    if ( TMath::Abs(gen_particle.pdgId()) != BS ) continue; 
+    int imum(-1), imup(-1), ipho(-1);
+    
+    // loop over all Bs daughters
+    for (size_t j = 0; j < gen_particle.numberOfDaughters(); ++j) {
+      const reco::Candidate  &dau = *(gen_particle.daughter(j));
+      //std::cout << "Event:" << iEvent.id().event() << "  j:" << j << "   PID:" << dau.pdgId() << "  pt:" << dau.pt() << "  Eta:" << dau.eta() << std::endl;
+      //if (dau.pdgId() == MUON  && dau.status()==1){
+      if (dau.pdgId() == MUON  ){
+	imup = j;
+	truth_Bsmuon_pt .push_back(dau.pt());
+	truth_Bsmuon_eta.push_back(dau.eta());
+	truth_Bsmuon_phi.push_back(dau.phi());
+	truth_Bsmuon_pdgid.push_back(dau.charge());
+	truth_nMuon++;
+	truth_nMuPos++;
+	//std::cout << "Event:" << iEvent.id().event() << "  Run:"<< iEvent.id().run() << "  lumi:" << iEvent.id().lumis() << ++ muon daughter:" << dau.numberOfDaughters() << std::endl;
+      }
+      if (dau.pdgId() == ANTIMUON ){
+	//if (dau.pdgId() == ANTIMUON && dau.status()==1){
+	imum = j;
+	truth_Bsmuon_pt .push_back(dau.pt());
+	truth_Bsmuon_eta.push_back(dau.eta());
+	truth_Bsmuon_phi.push_back(dau.phi());
+	truth_Bsmuon_pdgid.push_back(dau.charge());	
+	truth_nMuon++;
+	truth_nMuNeg++;
+	//std::cout << "Event:" << iEvent.id().event() << "  -- muon daughter:" << dau.numberOfDaughters() << std::endl;
+      }
+      if (dau.pdgId() == PHOTON   && dau.status()==1)  { ipho = j;
+	truth_Bsphoton_pt .push_back(dau.pt());
+	truth_Bsphoton_eta.push_back(dau.eta());
+	truth_Bsphoton_phi.push_back(dau.phi());
+	truth_nPhoton++;
+	//std::cout << "Event:" << iEvent.id().event() << "  photon multiplicity:" << truth_nPhoton << "   pt:" << dau.pt() << "  Eta:" << dau.eta();
+	//std::cout << "  mother:" << (dau.mother(0))->pdgId()  << std::endl;
+      }
+    }
+    //std::cout << " Event:" << iEvent.id().event() << "   photon multiplicity:" << truth_nPhoton << std::endl << std::endl;
+    if ( ipho == -1 ) continue;
+    
+    const reco::Candidate & pho = *(gen_particle.daughter(ipho));
+    //std::cout << "event:" << ievent.id().event() << "  photon multiplicity:" << ipho << "   pt:" << pho.pt() << "  eta:" << pho.eta() << std::endl;
+    const reco::Candidate *mum = NULL;
+    const reco::Candidate *mup = NULL;
+    
+    if (imum != -1 && imup != -1) {
+      mum = gen_particle.daughter(imum);
+      mup = gen_particle.daughter(imup);
+    }
+    
+    if ( mum == NULL || mup == NULL) continue;
+    
+    // std::cout << "event:" << iEvent.id().event() << "  photon multiplicity:" << ipho << "   pt:" << pho.pt() << "  eta:" << pho.eta() <<  "  muon number:" << imum << "   negative:" << imup << std::endl << std::endl;
+    //std::cout << "positive pt:" << mup->pt() << std::endl;
+    truth_Bs_pt  .push_back(gen_particle.pt());
+    truth_Bs_eta .push_back(gen_particle.eta());
+    truth_Bs_phi .push_back(gen_particle.phi());
+    truth_Bs_mass.push_back(gen_particle.mass());
+    truth_nBs++;
 
-    for (size_t i=0; i<pruned->size(); i++) {
-      int p_id = 0;
-      p_id = abs((*pruned)[i].pdgId());
-      const reco::Candidate *aonia = &(*pruned)[i];
-      if ( p_id == 531 && aonia->status() == 2) {
-	dimuon_pdgId = p_id;
-        foundit++;
-
-	int imum(-1), imup(-1), ipho(-1);
-	//int found_daugter = 0;	
-	for (size_t j=0; j<packed->size(); j++) { //get the pointer to the first survied ancestor of a given packed GenParticle in the prunedCollection
-	  const reco::Candidate * motherInPrunedCollection = (*packed)[j].mother(0);
-	  const reco::Candidate * d = &(*packed)[j];
-	  
-          if(aonia->pdgId() != motherInPrunedCollection->pdgId()) continue;
-	  if ( motherInPrunedCollection != nullptr && (d->pdgId() == 13 ) && isAncestor(aonia , motherInPrunedCollection) && d->status()==1 ){
-             imum = j;  foundit++;
-            //std::cout << " coming in muon M loop:" << j << " onia pdgID:" << aonia->pdgId() << " mother ID:";
-            //std::cout << motherInPrunedCollection->pdgId() << std::endl;
-	    ngenMMu_++;
-	    gen_muonM_p4.SetPtEtaPhiM(d->pt(),d->eta(),d->phi(),d->mass());
-	    genmumPt_ .push_back(d->pt());
-	    genmumEta_ .push_back(d->eta());
-	    genmumRap_ .push_back(d->rapidity());
-	    genmumPhi_ .push_back(d->phi()); 
-	  } 
-	  if ( motherInPrunedCollection != nullptr && (d->pdgId() == -13 ) && isAncestor(aonia , motherInPrunedCollection) && d->status()==1 ){
-             imup = j;    foundit++;
-            //std::cout << " coming in muon ++ loop:" << j << " onia pdgID:" << aonia->pdgId() << " mother ID:";
-            //std::cout << motherInPrunedCollection->pdgId() << std::endl;
-	    ngenPMu_++;
-	    gen_muonP_p4.SetPtEtaPhiM(d->pt(),d->eta(),d->phi(),d->mass());
-	    genmupPt_ .push_back(d->pt());
-	    genmupEta_ .push_back(d->eta());
-	    genmupRap_ .push_back(d->rapidity());
-	    genmupPhi_ .push_back(d->phi());    
-	  }
-	  
-	  if ( motherInPrunedCollection != nullptr && (d->pdgId() == 22 ) && isAncestor(aonia , motherInPrunedCollection) && d->status()==1 ){
-             ipho = j;   foundit++;
-            //std::cout << " coming in photon loop:" << j << " pt:"<< d->pt() << " eta:"<< d->eta() << " phi:"<< d->phi();
-            //std::cout <<  " onia pdgID:" << aonia->pdgId() << " mother ID:" << motherInPrunedCollection->pdgId() << std::endl;
-	    ngenPhoton_++;
-	    gen_photon_p4.SetPtEtaPhiM(d->pt(),d->eta(),d->phi(),d->mass());
-	    genphoPt_  .push_back(d->pt());
-	    genphoEta_ .push_back(d->eta());
-	    genphoRap_ .push_back(d->rapidity());
-	    genphoPhi_ .push_back(d->phi());
-
-	    genphoPx_ .push_back(d->px());
-	    genphoPy_ .push_back(d->py());
-	    genphoPz_ .push_back(d->pz());    
-  	    genphoVtxx_.push_back(d->vx());    
-   	    genphoVtxy_.push_back(d->vy());    
-    	    genphoVtxz_.push_back(d->vz());    
-	    
-	  }
-	} // packed MC size*/
- 	
-       if ( ipho == -1 || imum ==-1 || imup == -1) continue;
-        ngenBs_++;
-        //std::cout << " loop i:" << i << "  PDG ID:" << (*pruned)[i].pdgId() << " status:" << aonia->pdgId() ; 
-        //std::cout << " bs px:" << aonia->px() << " py:" << aonia->py() << " pz:" << aonia->pz() << std::endl;
-	genbPx_ .push_back(aonia->px());
-	genbPy_ .push_back(aonia->py());
-	genbPz_ .push_back(aonia->pz());
-
-	genbPt_   .push_back(aonia->pt());
-	genbEta_  .push_back(aonia->eta());
-	genbRap_  .push_back(aonia->rapidity());
-	genbPhi_  .push_back(aonia->phi());
-	genbMass_ .push_back(aonia->mass());
-	genbPID_  .push_back(aonia->pdgId());
-
-     } // if Bs nd status 2     
-    } // for pruned size
-  }// if MC
+  } // mc particle size
 }
 
 
