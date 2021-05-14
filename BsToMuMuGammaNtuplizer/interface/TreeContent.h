@@ -18,6 +18,10 @@ class TreeContent
 
   void Init ();
   void ClearNTuple ();
+  void ClearScalars();
+  void ClearScalarsMonteCarlo();
+  void ClearVectors();
+  void ClearVectorsMonteCarlo();
   void ClearMonteCarlo ();
   void MakeTreeBranches (TTree* theTree);
 
@@ -37,10 +41,10 @@ class TreeContent
   // ###########
   // # Trigger #
   // ###########
-  std::vector<std::string>  *TrigTable;
-  std::vector<int>          *TrigPrescales;
-  std::vector<std::string>  *L1Table;
-  std::vector<int>          *L1Prescales;
+  std::vector<std::string>  TrigTable;
+  std::vector<int>          TrigPrescales;
+  std::vector<std::string>  L1Table;
+  std::vector<int>          L1Prescales;
 
   
   
@@ -52,7 +56,7 @@ class TreeContent
   // ############################
   // # Pileup information in MC #
   // ############################
-  std::vector<double>       *bunchXingMC, *numInteractionsMC, *trueNumInteractionsMC;
+  std::vector<double>       bunchXingMC, numInteractionsMC, trueNumInteractionsMC;
   // Comment:
   // - PileupSummaryInfo::getTrueNumInteractions() gives the distribution of the mean number of interactions per crossing.
   // Since this is the mean value of the poisson distribution from which the number of interactions in- and out-of-time are
@@ -135,10 +139,6 @@ class TreeContent
 
 
 
-  void ClearScalars ();
-  void ClearScalarsMonteCarlo ();
-  void ClearVectors ();
-  void ClearVectorsMonteCarlo ();
 };
 
 #endif

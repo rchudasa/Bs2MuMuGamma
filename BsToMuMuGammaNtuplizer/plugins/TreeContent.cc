@@ -4,288 +4,25 @@
 TreeContent::TreeContent ()
 {
   ClearScalars();
-
-  // ### Trigger ###
-  TrigTable     = nullptr;
-  TrigPrescales = nullptr;
-  L1Table       = nullptr;
-  L1Prescales   = nullptr;
- // hltObjs       = nullptr;
-  
-    nMuons=0;
- //   muon_pt		=nullptr	;
- //   muon_eta		=nullptr	;
- //   muon_phi		=nullptr	;
- //   mum_dz		=nullptr	;
- //   muon_dxy		=nullptr	;
- //   mum_dz_error	=nullptr	;
- //   muon_dxy_error	=nullptr	;
- //   muon_vx		=nullptr	;
- //   muon_vy		=nullptr	;
- //   muon_vz		=nullptr	;
- //   muon_vertexChi2	=nullptr	;
- //   muon_vertexNDoF	=nullptr	;
- //   muon_charge	        =nullptr	;
- //   muon_isGlobalMuon	=nullptr	;
- //   muon_isTrackerMuon	=nullptr	;
- //   muon_StandAloneMuon =nullptr	;
- //   muon_isCaloMuon	=nullptr	;
- //   muon_isPFMuon	=nullptr	;
-
- //   muon_selector         	= nullptr; 
- //   muon_isIsolationValid 	= nullptr;
- //   muon_isPFIsolationValid 	= nullptr;
-
- //  muon_selector=nullptr; 
- //  muon_isIsolationValid=nullptr;
- //  muon_isPFIsolationValid=nullptr;
- // 
- //  muon_isolationR03_trackSumPt=nullptr;
- //  muon_isolationR03_trackEcalSumEt=nullptr;
- //  muon_isolationR03_trackHcalSumEt=nullptr;
- //  muon_isolationR03_trackHoSumEt=nullptr;
- //  muon_isolationR03_trackNTracks=nullptr;
- //  muon_isolationR03_trackNJets=nullptr;
- //  muon_isolationR03_trackerVetoSumPt=nullptr;
- //  muon_isolationR03_emVetoSumEt=nullptr;
- //  muon_isolationR03_hadVetoSumEt=nullptr;
- //  muon_isolationR03_hoVetoEt=nullptr;
- // 
- //  muon_isolationR05_trackSumPt=nullptr;
- //  muon_isolationR05_trackEcalSumEt=nullptr;
- //  muon_isolationR05_trackHcalSumEt=nullptr;
- //  muon_isolationR05_trackHoSumEt=nullptr;
- //  muon_isolationR05_trackNTracks=nullptr;
- //  muon_isolationR05_trackNJets=nullptr;
- //  muon_isolationR05_trackerVetoSumPt=nullptr;
- //  muon_isolationR05_emVetoSumEt=nullptr;
- //  muon_isolationR05_hadVetoSumEt=nullptr;
- //  muon_isolationR05_hoVetoEt=nullptr;
- // 
- //  muon_PFIsolationR03_sumChargedHadronPt=nullptr;
- //  muon_PFIsolationR03_sumChargedParticlePt=nullptr;
- //  muon_PFIsolationR03_sumNeutralHadronEt=nullptr;
- //  muon_PFIsolationR03_sumPhotonEt=nullptr;
- //  muon_PFIsolationR03_sumNeutralHadronEtHighThreshold=nullptr;
- //  muon_PFIsolationR03_sumPhotonEtHighThreshold=nullptr;
- //  muon_PFIsolationR03_sumPUPt=nullptr;
- //  
- //  muon_PFIsolationR04_sumChargedHadronPt=nullptr;
- //  muon_PFIsolationR04_sumChargedParticlePt=nullptr;
- //  muon_PFIsolationR04_sumNeutralHadronEt=nullptr;
- //  muon_PFIsolationR04_sumPhotonEt=nullptr;
- //  muon_PFIsolationR04_sumNeutralHadronEtHighThreshold=nullptr;
- //  muon_PFIsolationR04_sumPhotonEtHighThreshold=nullptr;
- //  muon_PFIsolationR04_sumPUPt=nullptr;
- 
-
-  // ### mu- ###
-  //mumHighPurity    = nullptr;
-  //mumCL            = nullptr;
-  //mumNormChi2      = nullptr;
-  //mumPx            = nullptr;
-  //mumPy            = nullptr;
-  //mumPz            = nullptr;
-  //mumDCAVtx        = nullptr;
-  //mumDCAVtxE       = nullptr;
-  //mumDCABS         = nullptr;
-  //mumDCABSE        = nullptr;
-  //mumKinkChi2      = nullptr;
-  //mumFracHits      = nullptr;
-  //mumdxyBS         = nullptr;
-  //mumdzBS          = nullptr;
-  //mumMinIP2D       = nullptr;
-  //mumMinIP2DE      = nullptr;
-  //mumMinIP         = nullptr;
-  //mumMinIPS        = nullptr;
-  //mumDeltaRwithMC  = nullptr;
-  //mumCat           = nullptr;
-  //mumNPixHits      = nullptr;
-  //mumNPixLayers    = nullptr;
-  //mumNTrkHits      = nullptr;
-  //mumNTrkLayers    = nullptr;
-  //mumNMuonHits     = nullptr;
-  //mumNMatchStation = nullptr;
-  //mumIso           = nullptr;
-  //mumIsoPt         = nullptr;
-  //mumIsodR         = nullptr;
-
-  }
-
-void TreeContent::Init ()
-{
-  // ### Trigger ###
- // TrigTable     = new std::vector<std::string>;
- // TrigPrescales = new std::vector<int>;
- // L1Table       = new std::vector<std::string>;
- // L1Prescales   = new std::vector<int>;
- // //hltObjs       = new std::vector<miniHLTObj>;
- // 
- //   nMuons= new int;
- //   muon_pt		= new std::vector<double>	;
- //   muon_eta		= new std::vector<double>	;
- //   muon_phi		= new std::vector<double>	;
- //   mum_dz		= new std::vector<double>	;
- //   muon_dxy		= new std::vector<double>	;
- //   mum_dz_error	= new std::vector<double>	;
- //   muon_dxy_error	= new std::vector<double>	;
- //   muon_vx		= new std::vector<double>	;
- //   muon_vy		= new std::vector<double>	;
- //   muon_vz		= new std::vector<double>	;
- //   muon_vertexChi2	= new std::vector<double>	;
- //   muon_vertexNDoF	= new std::vector<double>	;
- //   muon_charge	        = new std::vector<int>	;
- //   muon_isGlobalMuon	= new std::vector<bool>	;
- //   muon_isTrackerMuon	= new std::vector<bool>	;
- //   muon_StandAloneMuon = new std::vector<bool>	;
- //   muon_isCaloMuon	= new std::vector<bool>	;
- //   muon_isPFMuon	= new std::vector<bool>	;
-
- //   muon_selector         =  new std::vector<uint64_t>; 
- //
- //   muon_isIsolationValid =  new std::vector<bool>;;
- //   muon_isPFIsolationValid =  new std::vector<bool>;;
-
- //  muon_isolationR03_trackSumPt=new std::vector<double>;
- //  muon_isolationR03_trackEcalSumEt=new std::vector<double>;
- //  muon_isolationR03_trackHcalSumEt=new std::vector<double>;
- //  muon_isolationR03_trackHoSumEt=new std::vector<double>;
- //  muon_isolationR03_trackNTracks=new std::vector<int>;
- //  muon_isolationR03_trackNJets=new std::vector<int>;
- //  muon_isolationR03_trackerVetoSumPt=new std::vector<double>;
- //  muon_isolationR03_emVetoSumEt=new std::vector<double>;
- //  muon_isolationR03_hadVetoSumEt=new std::vector<double>;
- //  muon_isolationR03_hoVetoEt=new std::vector<double>;
- // 
- //  muon_isolationR05_trackSumPt=new std::vector<double>;
- //  muon_isolationR05_trackEcalSumEt=new std::vector<double>;
- //  muon_isolationR05_trackHcalSumEt=new std::vector<double>;
- //  muon_isolationR05_trackHoSumEt=new std::vector<double>;
- //  muon_isolationR05_trackNTracks=new std::vector<int>;
- //  muon_isolationR05_trackNJets=new std::vector<int>;
- //  muon_isolationR05_trackerVetoSumPt=new std::vector<double>;
- //  muon_isolationR05_emVetoSumEt=new std::vector<double>;
- //  muon_isolationR05_hadVetoSumEt=new std::vector<double>;
- //  muon_isolationR05_hoVetoEt=new std::vector<double>;
- // 
- //  muon_PFIsolationR03_sumChargedHadronPt=new std::vector<double>;
- //  muon_PFIsolationR03_sumChargedParticlePt=new std::vector<double>;
- //  muon_PFIsolationR03_sumNeutralHadronEt=new std::vector<double>;
- //  muon_PFIsolationR03_sumPhotonEt=new std::vector<double>;
- //  muon_PFIsolationR03_sumNeutralHadronEtHighThreshold=new std::vector<double>;
- //  muon_PFIsolationR03_sumPhotonEtHighThreshold=new std::vector<double>;
- //  muon_PFIsolationR03_sumPUPt=new std::vector<double>;
- //  
- //  muon_PFIsolationR04_sumChargedHadronPt=new std::vector<double>;
- //  muon_PFIsolationR04_sumChargedParticlePt=new std::vector<double>;
- //  muon_PFIsolationR04_sumNeutralHadronEt=new std::vector<double>;
- //  muon_PFIsolationR04_sumPhotonEt=new std::vector<double>;
- //  muon_PFIsolationR04_sumNeutralHadronEtHighThreshold=new std::vector<double>;
- //  muon_PFIsolationR04_sumPhotonEtHighThreshold=new std::vector<double>;
- //  muon_PFIsolationR04_sumPUPt=new std::vector<double>;
- 
-
-  // ### mu- ###
-  //mumHighPurity    = new std::vector<double>;
-  //mumCL            = new std::vector<double>;
 }
 
 TreeContent::~TreeContent ()
 {
-   //delete  TrigTable     	;	
-   //delete  TrigPrescales 	;
-   //delete  L1Table       	;
-   //delete  L1Prescales   	;
-   ////delete  hltObjs       	;
-  
-   //delete  nMuons		;
-   //delete  muon_pt		;
-   //delete  muon_eta		;
-   //delete  muon_phi		;
-   //delete  mum_dz		;
-   //delete  muon_dxy		;
-   //delete  mum_dz_error	;
-   //delete  muon_dxy_error	;
-   //delete  muon_vx		;
-   //delete  muon_vy		;
-   //delete  muon_vz		;
-   //delete  muon_vertexChi2	;
-   //delete  muon_vertexNDoF	;
-   //delete  muon_charge	        ;
-   //delete  muon_isGlobalMuon	;
-   //delete  muon_isTrackerMuon	;
-   //delete  muon_StandAloneMuon ;
-   //delete  muon_isCaloMuon	;
-   //delete  muon_isPFMuon	;
-
-   //delete  muon_selector       ;
- 
-   //delete  muon_isIsolationValid;
-   //delete  muon_isPFIsolationValid;
-
-   //delete muon_isolationR03_trackSumPt;
-   //delete muon_isolationR03_trackEcalSumEt;
-   //delete muon_isolationR03_trackHcalSumEt;
-   //delete muon_isolationR03_trackHoSumEt;
-   //delete muon_isolationR03_trackNTracks;
-   //delete muon_isolationR03_trackNJets;
-   //delete muon_isolationR03_trackerVetoSumPt;
-   //delete muon_isolationR03_emVetoSumEt;
-   //delete muon_isolationR03_hadVetoSumEt;
-   //delete muon_isolationR03_hoVetoEt;
-  
-   //delete muon_isolationR05_trackSumPt;
-   //delete muon_isolationR05_trackEcalSumEt;
-   //delete muon_isolationR05_trackHcalSumEt;
-   //delete muon_isolationR05_trackHoSumEt;
-   //delete muon_isolationR05_trackNTracks;
-   //delete muon_isolationR05_trackNJets;
-   //delete muon_isolationR05_trackerVetoSumPt;
-   //delete muon_isolationR05_emVetoSumEt;
-   //delete muon_isolationR05_hadVetoSumEt;
-   //delete muon_isolationR05_hoVetoEt;
-  
-   //delete muon_PFIsolationR03_sumChargedHadronPt;
-   //delete muon_PFIsolationR03_sumChargedParticlePt;
-   //delete muon_PFIsolationR03_sumNeutralHadronEt;
-   //delete muon_PFIsolationR03_sumPhotonEt;
-   //delete muon_PFIsolationR03_sumNeutralHadronEtHighThreshold;
-   //delete muon_PFIsolationR03_sumPhotonEtHighThreshold;
-   //delete muon_PFIsolationR03_sumPUPt;
-   // 
-   //delete muon_PFIsolationR04_sumChargedHadronPt;
-   //delete muon_PFIsolationR04_sumChargedParticlePt;
-   //delete muon_PFIsolationR04_sumNeutralHadronEt;
-   //delete muon_PFIsolationR04_sumPhotonEt;
-   //delete muon_PFIsolationR04_sumNeutralHadronEtHighThreshold;
-   //delete muon_PFIsolationR04_sumPhotonEtHighThreshold;
-   //delete muon_PFIsolationR04_sumPUPt;
- 
-
-  // ### mu- ###
-  //mumHighPurity    = nullptr;
-  //mumCL            = nullptr;
-
 }
 
 void TreeContent::ClearScalars ()
 {
-  ClearScalarsMonteCarlo();
+  nMuons=0;
 }
 
-void TreeContent::ClearScalarsMonteCarlo ()
-{
-
-}
 
 void TreeContent::ClearVectors ()
 {
   // ### Trigger ###
-  TrigTable->clear();
-  TrigPrescales->clear();
-  L1Table->clear();
-  L1Prescales->clear();
-   //hltObjs -> clear();
+  TrigTable.clear();
+  TrigPrescales.clear();
+  L1Table.clear();
+  L1Prescales.clear();
  
    muon_dcaToBS.clear();
    muon_dcaToBS_error.clear();
@@ -316,7 +53,6 @@ void TreeContent::ClearVectors ()
     dimuon_isGoodVertexFit.clear();
    
    
-   nMuons=0;
    muon_pt		.clear();
    muon_eta		.clear();
    muon_phi		.clear();
@@ -380,17 +116,18 @@ void TreeContent::ClearVectors ()
     muon_PFIsolationR04_sumPUPt.clear();
  
 
-  // ### mu- ###
-  //mumHighPurity    = nullptr.clear();
-  //mumCL            = nullptr.clear();
-
-
   ClearVectorsMonteCarlo();
 }
 
+void TreeContent::ClearScalarsMonteCarlo ()
+{
+  // ### Matching Between Reconstructed and Generated ###
+
+}
 void TreeContent::ClearVectorsMonteCarlo ()
 {
   // ### Matching Between Reconstructed and Generated ###
+
 }
 
 void TreeContent::ClearNTuple ()
@@ -511,8 +248,6 @@ void TreeContent::MakeTreeBranches (TTree* theTree)
    theTree->Branch("dimuon_MuPIdx"			,&dimuon_MuPIdx				);
    theTree->Branch("dimuon_MuMIdx"			,&dimuon_MuMIdx				);
    theTree->Branch("dimuon_isGoodVertexFit"		,&dimuon_isGoodVertexFit		);
-   
-   
 
 }
 

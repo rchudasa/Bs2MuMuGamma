@@ -1,5 +1,6 @@
 // -*- C++ -*-
 //
+
 // Package:    Bs2MuMuGamma/BsToMuMuGammaNTuplizer
 // Class:      BsToMuMuGammaNTuplizer
 //
@@ -215,9 +216,7 @@ BsToMuMuGammaNTuplizer::BsToMuMuGammaNTuplizer(const edm::ParameterSet& iConfig)
     
     printMsg=iConfig.getParameter<bool>("verbose");
     NTuple = new TreeContent;
-    NTuple->Init();
-
-    Utility=new Utils();
+    Utility= new Utils();
     muonMass= Utility->muonMass;
     muonMassErr= Utility->muonMassErr;
 
@@ -483,7 +482,7 @@ BsToMuMuGammaNTuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup&
 	    if (mumuVertexFitTree->isValid() == false)
             {
               if (printMsg) std::cout << __LINE__ << " : continue --> invalid vertex from the mu+ mu- vertex fit" << std::endl;
-         //     continue; 
+             continue; 
             }
         
             mumuVertexFitTree->movePointerToTheTop();
@@ -494,7 +493,15 @@ BsToMuMuGammaNTuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup&
             if (mumu_KV->vertexIsValid()== false)
             {
               if (printMsg) std::cout << __LINE__ << " : continue --> invalid vertex from the mu+ mu- vertex fit" << std::endl;
-              //continue;
+            (NTuple->dimuon_vertex_chi2).push_back(1e7);
+	    (NTuple->dimuon_vertex_ndof).push_back(0);
+	    (NTuple->dimuon_vertex_proba).push_back(0.0);
+	    (NTuple->dimuon_ls).push_back(1e5);
+	    (NTuple->dimuon_ls_error).push_back(1e7);
+            (NTuple->dimuon_cosAlphaBS).push_back(2);
+            (NTuple->dimuon_cosAlphaBS_error).push_back(1e7);
+	    
+	      continue;
             }
               
 
