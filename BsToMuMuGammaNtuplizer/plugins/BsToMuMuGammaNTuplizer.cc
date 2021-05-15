@@ -154,8 +154,8 @@ class BsToMuMuGammaNTuplizer : public edm::one::EDAnalyzer<edm::one::SharedResou
       //std::vector<std::string> trigTable_;
       //std::vector<std::string> l1Table_;
       
-      edm::EDGetTokenT<reco::BeamSpot>                 beamSpotToken_;
-      edm::EDGetTokenT<reco::VertexCollection>         vtxToken_;
+      edm::EDGetTokenT<reco::BeamSpot>                  beamSpotToken_;
+      edm::EDGetTokenT<reco::VertexCollection>          primaryVtxToken_;
       edm::EDGetTokenT<std::vector<reco::Muon>>         muonToken_;
 
 
@@ -190,7 +190,7 @@ BsToMuMuGammaNTuplizer::BsToMuMuGammaNTuplizer(const edm::ParameterSet& iConfig)
    //now do what ever initialization is needed
  
     beamSpotToken_  =consumes<reco::BeamSpot>                    (iConfig.getParameter<edm::InputTag>("beamSpot"));
-    vtxToken_       =consumes<reco::VertexCollection>            (iConfig.getParameter<edm::InputTag>("vertices"));
+    primaryVtxToken_       =consumes<reco::VertexCollection>            (iConfig.getParameter<edm::InputTag>("vertices"));
     //trackToken_     =consumes<reco::TrackCollection>             (iConfig.getParameter<edm::InputTag>("tracks"));
     //triggerBits_     =consumes<edm::TriggerResults>                    (iConfig.getParameter<edm::InputTag>("bits"));
     //triggerPrescales_ =consumes<pat::PackedTriggerPrescales>            (iConfig.getParameter<edm::InputTag>("prescales"));
@@ -258,6 +258,9 @@ BsToMuMuGammaNTuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup&
     edm::Handle<std::vector<reco::Muon>> muons;
     iEvent.getByToken(muonToken_, muons);
  
+    edm::Handle<std::vector<reco::Vertex>> primaryVertexCollection;
+    iEvent.getByToken(primaryVtxToken_, primaryVertexCollection);
+ 
     // adding  BEAMSOPT 
    NTuple->beamspot_x			= beamSpot.x0();  ;
    NTuple->beamspot_y			= beamSpot.y0();  ;
@@ -275,8 +278,29 @@ BsToMuMuGammaNTuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup&
    NTuple->beamspot_beamWidthY		= beamSpot.BeamWidthY();  ;
    NTuple->beamspot_beamWidthX_error	= beamSpot.BeamWidthXError();  ;
    NTuple->beamspot_beamWidthY_error	= beamSpot.BeamWidthXError();  ;
+ 
+   for(auto&  aVertex : *primaryVertexCollection)
+   {
 
-   
+	if( not aVertex.isValid() ) continue;
+
+        // # offlinePrimaryVertices # //
+        (NTuple->primaryVertex_isFake ).push_back(   aVertex.isFake() );
+        (NTuple->primaryVertex_x ).push_back(   aVertex.x() );
+        (NTuple->primaryVertex_y ).push_back(   aVertex.y()  );
+        (NTuple->primaryVertex_z ).push_back(   aVertex.z()  );
+        (NTuple->primaryVertex_t ).push_back(   aVertex.t()  );
+        (NTuple->primaryVertex_x_error ).push_back(   aVertex.xError()  );
+        (NTuple->primaryVertex_y_error ).push_back(   aVertex.yError() );
+        (NTuple->primaryVertex_z_error ).push_back(   aVertex.zError()  );
+        (NTuple->primaryVertex_t_error ).push_back(   aVertex.tError()  );
+        (NTuple->primaryVertex_ntracks ).push_back(   aVertex.nTracks() );
+        (NTuple->primaryVertex_ndof ).push_back(   aVertex.ndof() 	 	  );
+        (NTuple->primaryVertex_chi2 ).push_back(   aVertex.chi2()  );
+        (NTuple->primaryVertex_normalizedChi2 ).push_back(   aVertex.normalizedChi2()  );
+	
+
+   }
 
    
     

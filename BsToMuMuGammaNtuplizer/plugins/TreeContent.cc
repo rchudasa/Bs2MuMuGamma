@@ -149,6 +149,22 @@ void TreeContent::ClearVectors ()
    beamspot_beamWidthX_error  = 0.0   ;
    beamspot_beamWidthY_error  = 0.0   ;
   
+  // # offlinePrimaryVertices # //
+  
+  primaryVertex_isFake.clear();
+  primaryVertex_x.clear();
+  primaryVertex_y.clear();
+  primaryVertex_z.clear();
+  primaryVertex_t.clear();
+  primaryVertex_x_error.clear();
+  primaryVertex_y_error.clear();
+  primaryVertex_z_error.clear();
+  primaryVertex_t_error.clear();
+  primaryVertex_ntracks.clear();
+  primaryVertex_ndof.clear();
+  primaryVertex_chi2.clear();
+  primaryVertex_normalizedChi2.clear();
+  
   ClearVectorsMonteCarlo();
 }
 
@@ -299,6 +315,22 @@ void TreeContent::MakeTreeBranches (TTree* theTree)
    theTree->Branch("beamspot_beamWidthX_error"	,&beamspot_beamWidthX_error			);
    theTree->Branch("beamspot_beamWidthY_error"	,&beamspot_beamWidthY_error			);
 
+
+  // # offlinePrimaryVertex  # //
+  theTree->Branch("primaryVertex_isFake"	,&primaryVertex_isFake		   );
+  theTree->Branch("primaryVertex_x"		,&primaryVertex_x		   );
+  theTree->Branch("primaryVertex_y"		,&primaryVertex_y		   );
+  theTree->Branch("primaryVertex_z"		,&primaryVertex_z		   );
+  theTree->Branch("primaryVertex_t"		,&primaryVertex_t		   );
+  theTree->Branch("primaryVertex_x_error"	,&primaryVertex_x_error		   );
+  theTree->Branch("primaryVertex_y_error"	,&primaryVertex_y_error		   );
+  theTree->Branch("primaryVertex_z_error"	,&primaryVertex_z_error		   );
+  theTree->Branch("primaryVertex_t_error"	,&primaryVertex_t_error		   );
+  theTree->Branch("primaryVertex_ntracks"	,&primaryVertex_ntracks		   );
+  theTree->Branch("primaryVertex_ndof"		,&primaryVertex_ndof		   );
+  theTree->Branch("primaryVertex_chi2"		,&primaryVertex_chi2		   );
+  theTree->Branch("primaryVertex_normalizedChi2",&primaryVertex_normalizedChi2	   );
+  
 
 }
 
