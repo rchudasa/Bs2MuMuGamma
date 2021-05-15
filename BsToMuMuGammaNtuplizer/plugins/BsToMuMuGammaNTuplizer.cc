@@ -258,6 +258,28 @@ BsToMuMuGammaNTuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup&
     edm::Handle<std::vector<reco::Muon>> muons;
     iEvent.getByToken(muonToken_, muons);
  
+    // adding  BEAMSOPT 
+   NTuple->beamspot_x			= beamSpot.x0();  ;
+   NTuple->beamspot_y			= beamSpot.y0();  ;
+   NTuple->beamspot_z			= beamSpot.z0();  ;
+   NTuple->beamspot_x_error		= beamSpot.x0Error();  ;
+   NTuple->beamspot_y_error		= beamSpot.y0Error();  ;
+   NTuple->beamspot_z_error		= beamSpot.z0Error();  ;
+   NTuple->beamspot_dxdz		= beamSpot.dxdz();  ;
+   NTuple->beamspot_dydz		= beamSpot.dydz();  ;
+   NTuple->beamspot_sigmaZ		= beamSpot.sigmaZ();  ;
+   NTuple->beamspot_dxdz_error		= beamSpot.dxdzError();  ;
+   NTuple->beamspot_dydz_error		= beamSpot.dydzError();  ;
+   NTuple->beamspot_sigmaZError		= beamSpot.sigmaZ0Error();  ;
+   NTuple->beamspot_beamWidthX		= beamSpot.BeamWidthX();  ;
+   NTuple->beamspot_beamWidthY		= beamSpot.BeamWidthY();  ;
+   NTuple->beamspot_beamWidthX_error	= beamSpot.BeamWidthXError();  ;
+   NTuple->beamspot_beamWidthY_error	= beamSpot.BeamWidthXError();  ;
+
+   
+
+   
+    
     //  Muon Ntuplizing
     //  TODO : Add details to closest PV
     //         Add details with BS

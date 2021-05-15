@@ -12,7 +12,25 @@ TreeContent::~TreeContent ()
 
 void TreeContent::ClearScalars ()
 {
-  nMuons=0;
+   nMuons=0;
+      
+      // ## BEAMSOPT STUFF  ## //
+   beamspot_x  = 0.0   ;
+   beamspot_y  = 0.0   ;
+   beamspot_z  = 0.0   ;
+   beamspot_x_error  = 0.0   ;
+   beamspot_y_error  = 0.0   ;
+   beamspot_z_error  = 0.0   ;
+   beamspot_dxdz  = 0.0   ;
+   beamspot_dydz  = 0.0   ;
+   beamspot_sigmaZ  = 0.0   ;
+   beamspot_dxdz_error  = 0.0   ;
+   beamspot_dydz_error  = 0.0   ;
+   beamspot_sigmaZError  = 0.0   ;
+   beamspot_beamWidthX  = 0.0   ;
+   beamspot_beamWidthY  = 0.0   ;
+   beamspot_beamWidthX_error  = 0.0   ;
+   beamspot_beamWidthY_error  = 0.0   ;
 }
 
 
@@ -26,33 +44,6 @@ void TreeContent::ClearVectors ()
  
    muon_dcaToBS.clear();
    muon_dcaToBS_error.clear();
-   
-  
-    dimuon_pt.clear();
-    dimuon_eta.clear();
-    dimuon_phi.clear();
-    dimuon_energy.clear();
-    dimuon_px.clear();
-    dimuon_py.clear();
-    dimuon_pz.clear();
-    dimuon_vx.clear();
-    dimuon_vy.clear();
-    dimuon_vz.clear();
-    dimuon_vertex_chi2.clear();
-    dimuon_vertex_ndof.clear();
-    dimuon_vertex_proba.clear();
-    dimuon_invMass.clear();
-    dimuon_dcaMuMu.clear();
-    dimuon_deltaRMuMu.clear();
-    dimuon_ls.clear();
-    dimuon_ls_error.clear();
-    dimuon_cosAlphaBS.clear();
-    dimuon_cosAlphaBS_error.clear();
-    dimuon_MuPIdx.clear();
-    dimuon_MuMIdx.clear();
-    dimuon_isGoodVertexFit.clear();
-   
-   
    muon_pt		.clear();
    muon_eta		.clear();
    muon_phi		.clear();
@@ -114,8 +105,50 @@ void TreeContent::ClearVectors ()
     muon_PFIsolationR04_sumNeutralHadronEtHighThreshold.clear();
     muon_PFIsolationR04_sumPhotonEtHighThreshold.clear();
     muon_PFIsolationR04_sumPUPt.clear();
- 
+ 	
+	// ## DIMUON STUFF ## //
+	
+    dimuon_pt.clear();
+    dimuon_eta.clear();
+    dimuon_phi.clear();
+    dimuon_energy.clear();
+    dimuon_px.clear();
+    dimuon_py.clear();
+    dimuon_pz.clear();
+    dimuon_vx.clear();
+    dimuon_vy.clear();
+    dimuon_vz.clear();
+    dimuon_vertex_chi2.clear();
+    dimuon_vertex_ndof.clear();
+    dimuon_vertex_proba.clear();
+    dimuon_invMass.clear();
+    dimuon_dcaMuMu.clear();
+    dimuon_deltaRMuMu.clear();
+    dimuon_ls.clear();
+    dimuon_ls_error.clear();
+    dimuon_cosAlphaBS.clear();
+    dimuon_cosAlphaBS_error.clear();
+    dimuon_MuPIdx.clear();
+    dimuon_MuMIdx.clear();
+    dimuon_isGoodVertexFit.clear();
 
+      // ## BEAMSOPT STUFF  ## //
+
+   beamspot_x  = 0.0   ;
+   beamspot_y  = 0.0   ;
+   beamspot_z  = 0.0   ;
+   beamspot_x_error  = 0.0   ;
+   beamspot_y_error  = 0.0   ;
+   beamspot_z_error  = 0.0   ;
+   beamspot_dxdz  = 0.0   ;
+   beamspot_dydz  = 0.0   ;
+   beamspot_dxdz_error  = 0.0   ;
+   beamspot_dydz_error  = 0.0   ;
+   beamspot_beamWidthX  = 0.0   ;
+   beamspot_beamWidthY  = 0.0   ;
+   beamspot_beamWidthX_error  = 0.0   ;
+   beamspot_beamWidthY_error  = 0.0   ;
+  
   ClearVectorsMonteCarlo();
 }
 
@@ -248,6 +281,24 @@ void TreeContent::MakeTreeBranches (TTree* theTree)
    theTree->Branch("dimuon_MuPIdx"			,&dimuon_MuPIdx				);
    theTree->Branch("dimuon_MuMIdx"			,&dimuon_MuMIdx				);
    theTree->Branch("dimuon_isGoodVertexFit"		,&dimuon_isGoodVertexFit		);
+
+   theTree->Branch("beamspot_x"		 	,&beamspot_x		    			);
+   theTree->Branch("beamspot_y"			,&beamspot_y		    			);
+   theTree->Branch("beamspot_z"			,&beamspot_z		    			);
+   theTree->Branch("beamspot_x_error"		,&beamspot_x_error	    			);
+   theTree->Branch("beamspot_y_error"		,&beamspot_y_error	    			);
+   theTree->Branch("beamspot_z_error"		,&beamspot_z_error	    			);
+   theTree->Branch("beamspot_dxdz"		,&beamspot_dxdz		    			);
+   theTree->Branch("beamspot_dydz"		,&beamspot_dydz		    			);
+   theTree->Branch("beamspot_sigmaZ"		,&beamspot_sigmaZ	    			);
+   theTree->Branch("beamspot_dxdz_error"	,&beamspot_dxdz_error	    			);
+   theTree->Branch("beamspot_dydz_error"	,&beamspot_dydz_error	    			);
+   theTree->Branch("beamspot_sigmaZError"	,&beamspot_sigmaZError	    			);
+   theTree->Branch("beamspot_beamWidthX"	,&beamspot_beamWidthX	    			);
+   theTree->Branch("beamspot_beamWidthY"	,&beamspot_beamWidthY	    			);
+   theTree->Branch("beamspot_beamWidthX_error"	,&beamspot_beamWidthX_error			);
+   theTree->Branch("beamspot_beamWidthY_error"	,&beamspot_beamWidthY_error			);
+
 
 }
 
