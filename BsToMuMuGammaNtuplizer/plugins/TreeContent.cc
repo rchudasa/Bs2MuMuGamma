@@ -132,22 +132,6 @@ void TreeContent::ClearVectors ()
     dimuon_MuMIdx.clear();
     dimuon_isGoodVertexFit.clear();
 
-      // ## BEAMSOPT STUFF  ## //
-
-   beamspot_x  = 0.0   ;
-   beamspot_y  = 0.0   ;
-   beamspot_z  = 0.0   ;
-   beamspot_x_error  = 0.0   ;
-   beamspot_y_error  = 0.0   ;
-   beamspot_z_error  = 0.0   ;
-   beamspot_dxdz  = 0.0   ;
-   beamspot_dydz  = 0.0   ;
-   beamspot_dxdz_error  = 0.0   ;
-   beamspot_dydz_error  = 0.0   ;
-   beamspot_beamWidthX  = 0.0   ;
-   beamspot_beamWidthY  = 0.0   ;
-   beamspot_beamWidthX_error  = 0.0   ;
-   beamspot_beamWidthY_error  = 0.0   ;
   
   // # offlinePrimaryVertices # //
   
@@ -165,6 +149,28 @@ void TreeContent::ClearVectors ()
   primaryVertex_chi2.clear();
   primaryVertex_normalizedChi2.clear();
   
+ // # simGen Particles //
+ 
+  gen_hasAValid_candidate.clear();
+  gen_Bs_pt.clear() ;
+  gen_Bs_eta.clear() ;
+  gen_Bs_phi.clear() ;
+  gen_Bs_pz.clear() ;
+  gen_Bs_pdgId.clear();
+  gen_BsMuonM_pt.clear() ;
+  gen_BsMuonM_eta.clear() ;
+  gen_BsMuonM_phi.clear();
+  gen_BsMuonP_pt.clear() ;
+  gen_BsMuonP_eta.clear() ;
+  gen_BsMuonP_phi.clear();
+  gen_BsPhoton_pt.clear() ;
+  gen_BsPhoton_eta.clear() ;
+  gen_BsPhoton_phi.clear();
+  gen_BsPhotonMultiplicity.clear() ;
+  gen_BsMuonMMultiplicity.clear() ;
+  gen_BsMuonMPultiplicity.clear();
+
+
   ClearVectorsMonteCarlo();
 }
 
@@ -330,6 +336,26 @@ void TreeContent::MakeTreeBranches (TTree* theTree)
   theTree->Branch("primaryVertex_ndof"		,&primaryVertex_ndof		   );
   theTree->Branch("primaryVertex_chi2"		,&primaryVertex_chi2		   );
   theTree->Branch("primaryVertex_normalizedChi2",&primaryVertex_normalizedChi2	   );
+ 
+  theTree->Branch("gen_hasAValid_candidate"	,&gen_hasAValid_candidate	   );
+  theTree->Branch("gen_Bs_pt"			,&gen_Bs_pt			   );
+  theTree->Branch("gen_Bs_eta"			,&gen_Bs_eta			   );
+  theTree->Branch("gen_Bs_phi"			,&gen_Bs_phi			   );
+  theTree->Branch("gen_Bs_pz"			,&gen_Bs_pz			   );
+  theTree->Branch("gen_Bs_pdgId"		,&gen_Bs_pdgId			   );
+  theTree->Branch("gen_BsMuonM_pt"		,&gen_BsMuonM_pt		   );
+  theTree->Branch("gen_BsMuonM_eta"		,&gen_BsMuonM_eta		   );
+  theTree->Branch("gen_BsMuonM_phi"		,&gen_BsMuonM_phi		   );
+  theTree->Branch("gen_BsMuonP_pt"		,&gen_BsMuonP_pt		   );
+  theTree->Branch("gen_BsMuonP_eta"		,&gen_BsMuonP_eta		   );
+  theTree->Branch("gen_BsMuonP_phi"		,&gen_BsMuonP_phi		   );
+  theTree->Branch("gen_BsPhoton_pt"		,&gen_BsPhoton_pt		   );
+  theTree->Branch("gen_BsPhoton_eta"		,&gen_BsPhoton_eta		   );
+  theTree->Branch("gen_BsPhoton_phi"		,&gen_BsPhoton_phi		   );
+  theTree->Branch("gen_BsPhotonMultiplicity"	,&gen_BsPhotonMultiplicity	   );
+  theTree->Branch("gen_BsMuonMMultiplicity"	,&gen_BsMuonMMultiplicity	   );
+  theTree->Branch("gen_BsMuonMPultiplicity"	,&gen_BsMuonMPultiplicity	   );
+
   
 
 }

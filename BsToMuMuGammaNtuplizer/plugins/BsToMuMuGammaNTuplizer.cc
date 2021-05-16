@@ -118,6 +118,8 @@ class BsToMuMuGammaNTuplizer : public edm::one::EDAnalyzer<edm::one::SharedResou
       virtual void analyze(const edm::Event&, const edm::EventSetup&) override;
       virtual void endJob() override;
 
+      bool isMC;
+      bool doBsToMuMuGamma;
       TTree* theTree;
       TreeContent* NTuple;
       Utils* Utility;
@@ -145,8 +147,6 @@ class BsToMuMuGammaNTuplizer : public edm::one::EDAnalyzer<edm::one::SharedResou
         float muonMass,muonMassErr;
 
 
-
-      edm::EDGetTokenT<reco::GenParticleCollection>         prunedGenToken_;
       
       //edm::EDGetTokenT<edm::TriggerResults>                    triggerBits_;
       //edm::EDGetTokenT<pat::TriggerObjectStandAloneCollection> triggerObjects_;
@@ -157,6 +157,7 @@ class BsToMuMuGammaNTuplizer : public edm::one::EDAnalyzer<edm::one::SharedResou
       edm::EDGetTokenT<reco::BeamSpot>                  beamSpotToken_;
       edm::EDGetTokenT<reco::VertexCollection>          primaryVtxToken_;
       edm::EDGetTokenT<std::vector<reco::Muon>>         muonToken_;
+      edm::EDGetTokenT<reco::GenParticleCollection>   simGenTocken_;
 
 
 
@@ -182,19 +183,18 @@ class BsToMuMuGammaNTuplizer : public edm::one::EDAnalyzer<edm::one::SharedResou
 //
 // constructors and destructor
 //
-BsToMuMuGammaNTuplizer::BsToMuMuGammaNTuplizer(const edm::ParameterSet& iConfig)
- :
-  muonToken_(consumes<reco::MuonCollection>(iConfig.getParameter<edm::InputTag>("muons")))
-
+BsToMuMuGammaNTuplizer::BsToMuMuGammaNTuplizer(const edm::ParameterSet& iConfig) 
+: muonToken_(consumes<reco::MuonCollection>(iConfig.getParameter<edm::InputTag>("muons")))
 {
    //now do what ever initialization is needed
  
-    beamSpotToken_  =consumes<reco::BeamSpot>                    (iConfig.getParameter<edm::InputTag>("beamSpot"));
-    primaryVtxToken_       =consumes<reco::VertexCollection>            (iConfig.getParameter<edm::InputTag>("vertices"));
-    //trackToken_     =consumes<reco::TrackCollection>             (iConfig.getParameter<edm::InputTag>("tracks"));
-    //triggerBits_     =consumes<edm::TriggerResults>                    (iConfig.getParameter<edm::InputTag>("bits"));
-    //triggerPrescales_ =consumes<pat::PackedTriggerPrescales>            (iConfig.getParameter<edm::InputTag>("prescales"));
-    //trigTable_        =iConfig.getParameter<std::vector<std::string> >("TriggerNames");   
+    beamSpotToken_  	   =consumes<reco::BeamSpot>(iConfig.getParameter<edm::InputTag>("beamSpot"));
+    primaryVtxToken_       =consumes<reco::VertexCollection>(iConfig.getParameter<edm::InputTag>("vertices"));
+    simGenTocken_          =consumes<reco::GenParticleCollection>(iConfig.getParameter<edm::InputTag>("genParticles"));
+    //trackToken_          =consumes<reco::TrackCollection>             (iConfig.getParameter<edm::InputTag>("tracks"));
+    //triggerBits_         =consumes<edm::TriggerResults>                    (iConfig.getParameter<edm::InputTag>("bits"));
+    //triggerPrescales_    =consumes<pat::PackedTriggerPrescales>            (iConfig.getParameter<edm::InputTag>("prescales"));
+    //trigTable_           =iConfig.getParameter<std::vector<std::string> >("TriggerNames");   
     //triggerObjects_   (consumes<pat::TriggerObjectStandAloneCollection> (iConfig.getParameter<edm::InputTag>("objects"));
     
     //l1Table_           = iConfig.getParameter<std::vector<std::string> >("L1Names");   
@@ -215,6 +215,9 @@ BsToMuMuGammaNTuplizer::BsToMuMuGammaNTuplizer(const edm::ParameterSet& iConfig)
     maxDimuonInvariantMass    =  iConfig.getUntrackedParameter<double>("dimuon_maxInvMass")    ;
     
     printMsg=iConfig.getParameter<bool>("verbose");
+    isMC=iConfig.getParameter<bool>("isMC");
+    doBsToMuMuGamma=iConfig.getParameter<bool>("doBsToMuMuGamma");
+    
     NTuple = new TreeContent;
     Utility= new Utils();
     muonMass= Utility->muonMass;
@@ -257,6 +260,9 @@ BsToMuMuGammaNTuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup&
 
     edm::Handle<std::vector<reco::Muon>> muons;
     iEvent.getByToken(muonToken_, muons);
+ 
+    edm::Handle<reco::GenParticleCollection> genParticleCollection;
+    if(isMC) iEvent.getByToken(simGenTocken_, genParticleCollection);
  
     edm::Handle<std::vector<reco::Vertex>> primaryVertexCollection;
     iEvent.getByToken(primaryVtxToken_, primaryVertexCollection);
@@ -301,9 +307,79 @@ BsToMuMuGammaNTuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup&
 	
 
    }
-
    
-    
+   int phoMul(0),muMMul(0),muPMul(0);
+   
+   if(isMC)
+   {
+	   for(auto& aBsMeson : *genParticleCollection)
+	   {
+		if(abs(aBsMeson.pdgId())!=531) continue;
+	
+		(NTuple->gen_Bs_pt).push_back(aBsMeson.pt());
+		(NTuple->gen_Bs_eta).push_back(aBsMeson.eta());
+		(NTuple->gen_Bs_phi).push_back(aBsMeson.phi());
+		(NTuple->gen_Bs_pz).push_back(aBsMeson.pz());
+		(NTuple->gen_Bs_pdgId).push_back(aBsMeson.pdgId());
+		
+		for(unsigned int j=0; j<aBsMeson.numberOfDaughters(); j++)
+	      	{
+		    auto& bsDaughter = *(aBsMeson.daughter(j));
+	 	    
+		    if(bsDaughter.pdgId() == -13) muMMul++;
+		    if(bsDaughter.pdgId() ==  13) muPMul++;
+		    if(bsDaughter.pdgId() ==  22) phoMul++;
+		}
+		if(muMMul!=1 or muPMul!=1 or phoMul!=1 )
+		{
+			muMMul=0;
+			muPMul=0;
+			phoMul=0;
+			continue;
+		}
+	
+		for(unsigned int j=0; j<aBsMeson.numberOfDaughters(); j++)
+	      	{
+	            auto& bsDaughter = *(aBsMeson.daughter(j));
+		    if(bsDaughter.pdgId() == -13) 
+		    {
+			(NTuple->gen_BsMuonM_pt).push_back(bsDaughter.pt());
+			(NTuple->gen_BsMuonM_eta).push_back(bsDaughter.pt());
+			(NTuple->gen_BsMuonM_phi).push_back(bsDaughter.pt());
+		    }
+		    if(bsDaughter.pdgId() ==  13)
+		    {
+			(NTuple->gen_BsMuonP_pt).push_back(bsDaughter.pt());
+			(NTuple->gen_BsMuonP_eta).push_back(bsDaughter.pt());
+			(NTuple->gen_BsMuonP_phi).push_back(bsDaughter.pt());
+		    }
+		    if(bsDaughter.pdgId() ==  22)
+		    {
+			(NTuple->gen_BsPhoton_pt).push_back(bsDaughter.pt());
+			(NTuple->gen_BsPhoton_eta).push_back(bsDaughter.pt());
+			(NTuple->gen_BsPhoton_phi).push_back(bsDaughter.pt());
+	
+		    }
+		}
+	
+		break;
+	
+        }
+	
+	bool hasAValidMCCandidate= true;
+	if(muMMul!=1 or muPMul!=1 ) 
+	{
+		if(printMsg) std::cout<<" Ghost event found !! Mu+ Mu- from any of the Bs not found to == 1 "<<std::endl;
+		hasAValidMCCandidate = false;
+	}
+	else if(doBsToMuMuGamma and phoMul!=1)
+	{
+		if(printMsg) std::cout<<" Ghost event found !! gamma multiplicity from any of the Bs not found to == 1 "<<std::endl;
+		hasAValidMCCandidate = false;
+	}
+
+        (NTuple->gen_hasAValid_candidate).push_back(hasAValidMCCandidate);
+    }
     //  Muon Ntuplizing
     //  TODO : Add details to closest PV
     //         Add details with BS
@@ -313,6 +389,7 @@ BsToMuMuGammaNTuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup&
     
     int ii=0,jj=0;
     reco::TrackRef aMuonInnerTrack,bMuonInnerTrack;
+    NTuple->nMuons = muons->size();
     for ( uint32_t i=0;i<muons->size();i++) 
     {
     	 auto &aMuon=muons->at(i);
@@ -401,7 +478,6 @@ BsToMuMuGammaNTuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup&
   // ### mu- ###
   //mumHighPurity    = nullptr;
   //mumCL            = nullptr;
-	 NTuple->nMuons+=1; 
 	 
 	 if ((aMuonInnerTrack.isNull() == true))
 	 {

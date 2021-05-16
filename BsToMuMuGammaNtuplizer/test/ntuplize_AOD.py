@@ -12,7 +12,7 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 1
 
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(400) )
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(200) )
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(200) )
 
 process.options = cms.untracked.PSet( numberOfConcurrentLuminosityBlocks = cms.untracked.uint32(1),
     numberOfConcurrentRuns = cms.untracked.uint32(1),
@@ -38,6 +38,17 @@ process.TFileService = cms.Service("TFileService",
 )
 
 
+process.decayfilter = cms.EDFilter("GenDecayKineFilter",
+    SimGenParticle = cms.InputTag("genParticles"),
+    DaughterIDs = cms.untracked.vint32(13, -13, 22),
+    MaxEta = cms.untracked.vdouble(2.5, 2.5, 9999.0),
+    MinEta = cms.untracked.vdouble(-2.5, -2.5, -9999.0),
+    MinPt = cms.untracked.vdouble(3.5, 3.5, -99.0),
+    NumberDaughters = cms.untracked.int32(3),
+    ParticleID = cms.untracked.int32(531),
+    verbose = cms.untracked.int32(20)
+)
+
 process.Ntuples = cms.EDAnalyzer("BsToMuMuGammaNTuplizer",
 	muons   =cms.InputTag("muons"),
 	beamSpot = cms.InputTag("offlineBeamSpot"),
@@ -55,7 +66,10 @@ process.Ntuples = cms.EDAnalyzer("BsToMuMuGammaNTuplizer",
 	dimuon_maxDCAMuMu 	= cms.untracked.double(1e5),	
 	dimuon_maxCosAlphaToBS 	= cms.untracked.double(1e5),	
 	verbose  = cms.bool(True),
+	doBsToMuMuGamma = cms.bool(True),
+	isMC = cms.bool(True),
+	genParticles = cms.InputTag("genParticles")
 )
 
 
-process.p = cms.Path(process.Ntuples)
+process.p = cms.Path(process.decayfilter*process.Ntuples)
