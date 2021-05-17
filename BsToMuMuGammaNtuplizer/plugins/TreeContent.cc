@@ -12,7 +12,25 @@ TreeContent::~TreeContent ()
 
 void TreeContent::ClearScalars ()
 {
-  nMuons=0;
+   nMuons=0;
+      
+      // ## BEAMSOPT STUFF  ## //
+   beamspot_x  = 0.0   ;
+   beamspot_y  = 0.0   ;
+   beamspot_z  = 0.0   ;
+   beamspot_x_error  = 0.0   ;
+   beamspot_y_error  = 0.0   ;
+   beamspot_z_error  = 0.0   ;
+   beamspot_dxdz  = 0.0   ;
+   beamspot_dydz  = 0.0   ;
+   beamspot_sigmaZ  = 0.0   ;
+   beamspot_dxdz_error  = 0.0   ;
+   beamspot_dydz_error  = 0.0   ;
+   beamspot_sigmaZError  = 0.0   ;
+   beamspot_beamWidthX  = 0.0   ;
+   beamspot_beamWidthY  = 0.0   ;
+   beamspot_beamWidthX_error  = 0.0   ;
+   beamspot_beamWidthY_error  = 0.0   ;
 }
 
 
@@ -26,33 +44,6 @@ void TreeContent::ClearVectors ()
  
    muon_dcaToBS.clear();
    muon_dcaToBS_error.clear();
-   
-  
-    dimuon_pt.clear();
-    dimuon_eta.clear();
-    dimuon_phi.clear();
-    dimuon_energy.clear();
-    dimuon_px.clear();
-    dimuon_py.clear();
-    dimuon_pz.clear();
-    dimuon_vx.clear();
-    dimuon_vy.clear();
-    dimuon_vz.clear();
-    dimuon_vertex_chi2.clear();
-    dimuon_vertex_ndof.clear();
-    dimuon_vertex_proba.clear();
-    dimuon_invMass.clear();
-    dimuon_dcaMuMu.clear();
-    dimuon_deltaRMuMu.clear();
-    dimuon_ls.clear();
-    dimuon_ls_error.clear();
-    dimuon_cosAlphaBS.clear();
-    dimuon_cosAlphaBS_error.clear();
-    dimuon_MuPIdx.clear();
-    dimuon_MuMIdx.clear();
-    dimuon_isGoodVertexFit.clear();
-   
-   
    muon_pt		.clear();
    muon_eta		.clear();
    muon_phi		.clear();
@@ -114,7 +105,71 @@ void TreeContent::ClearVectors ()
     muon_PFIsolationR04_sumNeutralHadronEtHighThreshold.clear();
     muon_PFIsolationR04_sumPhotonEtHighThreshold.clear();
     muon_PFIsolationR04_sumPUPt.clear();
+ 	
+	// ## DIMUON STUFF ## //
+	
+    dimuon_pt.clear();
+    dimuon_eta.clear();
+    dimuon_phi.clear();
+    dimuon_energy.clear();
+    dimuon_px.clear();
+    dimuon_py.clear();
+    dimuon_pz.clear();
+    dimuon_vx.clear();
+    dimuon_vy.clear();
+    dimuon_vz.clear();
+    dimuon_vertex_chi2.clear();
+    dimuon_vertex_ndof.clear();
+    dimuon_vertex_proba.clear();
+    dimuon_invMass.clear();
+    dimuon_dcaMuMu.clear();
+    dimuon_deltaRMuMu.clear();
+    dimuon_ls.clear();
+    dimuon_ls_error.clear();
+    dimuon_cosAlphaBS.clear();
+    dimuon_cosAlphaBS_error.clear();
+    dimuon_MuPIdx.clear();
+    dimuon_MuMIdx.clear();
+    dimuon_isGoodVertexFit.clear();
+
+  
+  // # offlinePrimaryVertices # //
+  
+  primaryVertex_isFake.clear();
+  primaryVertex_x.clear();
+  primaryVertex_y.clear();
+  primaryVertex_z.clear();
+  primaryVertex_t.clear();
+  primaryVertex_x_error.clear();
+  primaryVertex_y_error.clear();
+  primaryVertex_z_error.clear();
+  primaryVertex_t_error.clear();
+  primaryVertex_ntracks.clear();
+  primaryVertex_ndof.clear();
+  primaryVertex_chi2.clear();
+  primaryVertex_normalizedChi2.clear();
+  
+ // # simGen Particles //
  
+  gen_hasAValid_candidate.clear();
+  gen_Bs_pt.clear() ;
+  gen_Bs_eta.clear() ;
+  gen_Bs_phi.clear() ;
+  gen_Bs_pz.clear() ;
+  gen_Bs_pdgId.clear();
+  gen_BsMuonM_pt.clear() ;
+  gen_BsMuonM_eta.clear() ;
+  gen_BsMuonM_phi.clear();
+  gen_BsMuonP_pt.clear() ;
+  gen_BsMuonP_eta.clear() ;
+  gen_BsMuonP_phi.clear();
+  gen_BsPhoton_pt.clear() ;
+  gen_BsPhoton_eta.clear() ;
+  gen_BsPhoton_phi.clear();
+  gen_BsPhotonMultiplicity.clear() ;
+  gen_BsMuonMMultiplicity.clear() ;
+  gen_BsMuonMPultiplicity.clear();
+
 
   ClearVectorsMonteCarlo();
 }
@@ -248,6 +303,60 @@ void TreeContent::MakeTreeBranches (TTree* theTree)
    theTree->Branch("dimuon_MuPIdx"			,&dimuon_MuPIdx				);
    theTree->Branch("dimuon_MuMIdx"			,&dimuon_MuMIdx				);
    theTree->Branch("dimuon_isGoodVertexFit"		,&dimuon_isGoodVertexFit		);
+
+   theTree->Branch("beamspot_x"		 	,&beamspot_x		    			);
+   theTree->Branch("beamspot_y"			,&beamspot_y		    			);
+   theTree->Branch("beamspot_z"			,&beamspot_z		    			);
+   theTree->Branch("beamspot_x_error"		,&beamspot_x_error	    			);
+   theTree->Branch("beamspot_y_error"		,&beamspot_y_error	    			);
+   theTree->Branch("beamspot_z_error"		,&beamspot_z_error	    			);
+   theTree->Branch("beamspot_dxdz"		,&beamspot_dxdz		    			);
+   theTree->Branch("beamspot_dydz"		,&beamspot_dydz		    			);
+   theTree->Branch("beamspot_sigmaZ"		,&beamspot_sigmaZ	    			);
+   theTree->Branch("beamspot_dxdz_error"	,&beamspot_dxdz_error	    			);
+   theTree->Branch("beamspot_dydz_error"	,&beamspot_dydz_error	    			);
+   theTree->Branch("beamspot_sigmaZError"	,&beamspot_sigmaZError	    			);
+   theTree->Branch("beamspot_beamWidthX"	,&beamspot_beamWidthX	    			);
+   theTree->Branch("beamspot_beamWidthY"	,&beamspot_beamWidthY	    			);
+   theTree->Branch("beamspot_beamWidthX_error"	,&beamspot_beamWidthX_error			);
+   theTree->Branch("beamspot_beamWidthY_error"	,&beamspot_beamWidthY_error			);
+
+
+  // # offlinePrimaryVertex  # //
+  theTree->Branch("primaryVertex_isFake"	,&primaryVertex_isFake		   );
+  theTree->Branch("primaryVertex_x"		,&primaryVertex_x		   );
+  theTree->Branch("primaryVertex_y"		,&primaryVertex_y		   );
+  theTree->Branch("primaryVertex_z"		,&primaryVertex_z		   );
+  theTree->Branch("primaryVertex_t"		,&primaryVertex_t		   );
+  theTree->Branch("primaryVertex_x_error"	,&primaryVertex_x_error		   );
+  theTree->Branch("primaryVertex_y_error"	,&primaryVertex_y_error		   );
+  theTree->Branch("primaryVertex_z_error"	,&primaryVertex_z_error		   );
+  theTree->Branch("primaryVertex_t_error"	,&primaryVertex_t_error		   );
+  theTree->Branch("primaryVertex_ntracks"	,&primaryVertex_ntracks		   );
+  theTree->Branch("primaryVertex_ndof"		,&primaryVertex_ndof		   );
+  theTree->Branch("primaryVertex_chi2"		,&primaryVertex_chi2		   );
+  theTree->Branch("primaryVertex_normalizedChi2",&primaryVertex_normalizedChi2	   );
+ 
+  theTree->Branch("gen_hasAValid_candidate"	,&gen_hasAValid_candidate	   );
+  theTree->Branch("gen_Bs_pt"			,&gen_Bs_pt			   );
+  theTree->Branch("gen_Bs_eta"			,&gen_Bs_eta			   );
+  theTree->Branch("gen_Bs_phi"			,&gen_Bs_phi			   );
+  theTree->Branch("gen_Bs_pz"			,&gen_Bs_pz			   );
+  theTree->Branch("gen_Bs_pdgId"		,&gen_Bs_pdgId			   );
+  theTree->Branch("gen_BsMuonM_pt"		,&gen_BsMuonM_pt		   );
+  theTree->Branch("gen_BsMuonM_eta"		,&gen_BsMuonM_eta		   );
+  theTree->Branch("gen_BsMuonM_phi"		,&gen_BsMuonM_phi		   );
+  theTree->Branch("gen_BsMuonP_pt"		,&gen_BsMuonP_pt		   );
+  theTree->Branch("gen_BsMuonP_eta"		,&gen_BsMuonP_eta		   );
+  theTree->Branch("gen_BsMuonP_phi"		,&gen_BsMuonP_phi		   );
+  theTree->Branch("gen_BsPhoton_pt"		,&gen_BsPhoton_pt		   );
+  theTree->Branch("gen_BsPhoton_eta"		,&gen_BsPhoton_eta		   );
+  theTree->Branch("gen_BsPhoton_phi"		,&gen_BsPhoton_phi		   );
+  theTree->Branch("gen_BsPhotonMultiplicity"	,&gen_BsPhotonMultiplicity	   );
+  theTree->Branch("gen_BsMuonMMultiplicity"	,&gen_BsMuonMMultiplicity	   );
+  theTree->Branch("gen_BsMuonMPultiplicity"	,&gen_BsMuonMPultiplicity	   );
+
+  
 
 }
 

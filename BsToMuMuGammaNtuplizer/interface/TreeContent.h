@@ -81,7 +81,7 @@ class TreeContent
 
   std::vector<int>	muon_charge;
   std::vector<bool>	muon_isGlobalMuon,muon_isTrackerMuon,muon_StandAloneMuon,muon_isCaloMuon,muon_isPFMuon;
-  int 	            	nMuons;
+  int 	            	nMuons;  // total number of muons in the reco collction before basic cuts are applied reco::MuonCollection->size()
 
   std::vector<uint64_t> muon_selector; 
   std::vector<bool>	muon_isIsolationValid;
@@ -129,15 +129,30 @@ class TreeContent
   std::vector<double> muon_dcaToBS_error;
   
  // # Dimuon # // 
-  
   std::vector<double>   dimuon_pt, dimuon_eta, dimuon_phi, dimuon_energy, dimuon_px,dimuon_py,dimuon_pz;
   std::vector<double>   dimuon_vx,dimuon_vy,dimuon_vz,dimuon_vertex_chi2,dimuon_vertex_ndof,dimuon_vertex_proba;
   std::vector<double>   dimuon_invMass,dimuon_dcaMuMu,dimuon_deltaRMuMu,dimuon_ls,dimuon_ls_error,dimuon_cosAlphaBS,dimuon_cosAlphaBS_error;
   std::vector<int>	dimuon_MuPIdx,dimuon_MuMIdx;
   std::vector<bool>     dimuon_isGoodVertexFit;
   
+  // # BeamSpot # //
+  double beamspot_x,beamspot_y,beamspot_z,beamspot_x_error,beamspot_y_error,beamspot_z_error;
+  double beamspot_dxdz,beamspot_dydz,beamspot_sigmaZ,beamspot_dxdz_error,beamspot_dydz_error,beamspot_sigmaZError;
+  double beamspot_beamWidthX,beamspot_beamWidthY,beamspot_beamWidthX_error,beamspot_beamWidthY_error;
+ 
+  // # offlinePrimaryVertices # //
+  std::vector<bool> primaryVertex_isFake;
+  std::vector<double> primaryVertex_x, primaryVertex_y,primaryVertex_z,primaryVertex_t;
+  std::vector<double> primaryVertex_x_error, primaryVertex_y_error,primaryVertex_z_error,primaryVertex_t_error;
+  std::vector<double> primaryVertex_ntracks,primaryVertex_ndof,primaryVertex_chi2,primaryVertex_normalizedChi2;
 
-
+ // # Gen Data # //
+ std::vector<bool>  gen_hasAValid_candidate;
+ std::vector<double> gen_Bs_pt,gen_Bs_eta,gen_Bs_phi,gen_Bs_pz,gen_Bs_pdgId;
+ std::vector<double> gen_BsMuonM_pt,gen_BsMuonM_eta,gen_BsMuonM_phi;
+ std::vector<double> gen_BsMuonP_pt,gen_BsMuonP_eta,gen_BsMuonP_phi;
+ std::vector<double> gen_BsPhoton_pt,gen_BsPhoton_eta,gen_BsPhoton_phi;
+ std::vector<int> gen_BsPhotonMultiplicity,gen_BsMuonMMultiplicity,gen_BsMuonMPultiplicity;
 
 };
 
