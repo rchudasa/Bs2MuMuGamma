@@ -315,12 +315,6 @@ BsToMuMuGammaNTuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup&
 	   for(auto& aBsMeson : *genParticleCollection)
 	   {
 		if(abs(aBsMeson.pdgId())!=531) continue;
-	
-		(NTuple->gen_Bs_pt).push_back(aBsMeson.pt());
-		(NTuple->gen_Bs_eta).push_back(aBsMeson.eta());
-		(NTuple->gen_Bs_phi).push_back(aBsMeson.phi());
-		(NTuple->gen_Bs_pz).push_back(aBsMeson.pz());
-		(NTuple->gen_Bs_pdgId).push_back(aBsMeson.pdgId());
 		
 		for(unsigned int j=0; j<aBsMeson.numberOfDaughters(); j++)
 	      	{
@@ -361,6 +355,12 @@ BsToMuMuGammaNTuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup&
 	
 		    }
 		}
+	
+		(NTuple->gen_Bs_pt).push_back(aBsMeson.pt());
+		(NTuple->gen_Bs_eta).push_back(aBsMeson.eta());
+		(NTuple->gen_Bs_phi).push_back(aBsMeson.phi());
+		(NTuple->gen_Bs_pz).push_back(aBsMeson.pz());
+		(NTuple->gen_Bs_pdgId).push_back(aBsMeson.pdgId());
 	
 		break;
 	
