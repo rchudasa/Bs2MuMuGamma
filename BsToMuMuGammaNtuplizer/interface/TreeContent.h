@@ -42,6 +42,7 @@ class TreeContent
   // # Trigger #
   // ###########
   std::vector<std::string>  TrigTable;
+  std::vector<bool>         TrigResult;
   std::vector<int>          TrigPrescales;
   std::vector<std::string>  L1Table;
   std::vector<int>          L1Prescales;
@@ -57,6 +58,7 @@ class TreeContent
   // # Pileup information in MC #
   // ############################
   std::vector<double>       bunchXingMC, numInteractionsMC, trueNumInteractionsMC;
+  
   // Comment:
   // - PileupSummaryInfo::getTrueNumInteractions() gives the distribution of the mean number of interactions per crossing.
   // Since this is the mean value of the poisson distribution from which the number of interactions in- and out-of-time are
@@ -71,7 +73,6 @@ class TreeContent
   // # Primary Vertex and Beam Spot #
   // ################################
   double                    bsX, bsY;
-
   
   // # reco::Muons #
   
@@ -152,7 +153,7 @@ class TreeContent
  std::vector<double> gen_BsMuonM_pt,gen_BsMuonM_eta,gen_BsMuonM_phi;
  std::vector<double> gen_BsMuonP_pt,gen_BsMuonP_eta,gen_BsMuonP_phi;
  std::vector<double> gen_BsPhoton_pt,gen_BsPhoton_eta,gen_BsPhoton_phi;
- std::vector<int> gen_BsPhotonMultiplicity,gen_BsMuonMMultiplicity,gen_BsMuonMPultiplicity;
+ std::vector<int> gen_BsPhotonMultiplicity,gen_BsMuonMMultiplicity,gen_BsMuonPMultiplicity;
 
 };
 

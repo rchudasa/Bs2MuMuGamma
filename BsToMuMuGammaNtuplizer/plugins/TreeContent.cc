@@ -38,6 +38,7 @@ void TreeContent::ClearVectors ()
 {
   // ### Trigger ###
   TrigTable.clear();
+  TrigResult.clear();
   TrigPrescales.clear();
   L1Table.clear();
   L1Prescales.clear();
@@ -168,7 +169,7 @@ void TreeContent::ClearVectors ()
   gen_BsPhoton_phi.clear();
   gen_BsPhotonMultiplicity.clear() ;
   gen_BsMuonMMultiplicity.clear() ;
-  gen_BsMuonMPultiplicity.clear();
+  gen_BsMuonPMultiplicity.clear();
 
 
   ClearVectorsMonteCarlo();
@@ -212,6 +213,7 @@ void TreeContent::MakeTreeBranches (TTree* theTree)
 
   // ### Trigger ###
   theTree->Branch("TrigTable",     &TrigTable);
+  theTree->Branch("TrigResult",    &TrigResult);
   theTree->Branch("TrigPrescales", &TrigPrescales);
   theTree->Branch("L1Table",       &L1Table);
   theTree->Branch("L1Prescales",   &L1Prescales);
@@ -354,7 +356,7 @@ void TreeContent::MakeTreeBranches (TTree* theTree)
   theTree->Branch("gen_BsPhoton_phi"		,&gen_BsPhoton_phi		   );
   theTree->Branch("gen_BsPhotonMultiplicity"	,&gen_BsPhotonMultiplicity	   );
   theTree->Branch("gen_BsMuonMMultiplicity"	,&gen_BsMuonMMultiplicity	   );
-  theTree->Branch("gen_BsMuonMPultiplicity"	,&gen_BsMuonMPultiplicity	   );
+  theTree->Branch("gen_BsMuonPMultiplicity"	,&gen_BsMuonPMultiplicity	   );
 
   
 

@@ -191,10 +191,9 @@ BsToMuMuGammaNTuplizer::BsToMuMuGammaNTuplizer(const edm::ParameterSet& iConfig)
     beamSpotToken_  	   =consumes<reco::BeamSpot>(iConfig.getParameter<edm::InputTag>("beamSpot"));
     primaryVtxToken_       =consumes<reco::VertexCollection>(iConfig.getParameter<edm::InputTag>("vertices"));
     simGenTocken_          =consumes<reco::GenParticleCollection>(iConfig.getParameter<edm::InputTag>("genParticles"));
-    //trackToken_          =consumes<reco::TrackCollection>             (iConfig.getParameter<edm::InputTag>("tracks"));
-    //triggerBits_         =consumes<edm::TriggerResults>                    (iConfig.getParameter<edm::InputTag>("bits"));
-    //triggerPrescales_    =consumes<pat::PackedTriggerPrescales>            (iConfig.getParameter<edm::InputTag>("prescales"));
-    //trigTable_           =iConfig.getParameter<std::vector<std::string> >("TriggerNames");   
+    //triggerBits_           =consumes<edm::TriggerResults>                    (iConfig.getParameter<edm::InputTag>("HLTBits"));
+    //triggerPrescales_      =consumes<pat::PackedTriggerPrescales>            (iConfig.getParameter<edm::InputTag>("prescales"));
+    //trigTable_             =iConfig.getParameter<std::vector<std::string> >("TriggerNames");   
     //triggerObjects_   (consumes<pat::TriggerObjectStandAloneCollection> (iConfig.getParameter<edm::InputTag>("objects"));
     
     //l1Table_           = iConfig.getParameter<std::vector<std::string> >("L1Names");   
@@ -248,8 +247,43 @@ void
 BsToMuMuGammaNTuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
    using namespace edm;
- 
-     // Get magnetic field
+ /*
+    edm::Handle<edm::TriggerResults>                    triggerBits;
+    //edm::Handle<pat::TriggerObjectStandAloneCollection> triggerObjects;
+    //edm::Handle<pat::PackedTriggerPrescales>            triggerPrescales;
+
+    iEvent.getByToken(triggerBits_,      triggerBits);
+    //iEvent.getByToken(triggerObjects_,   triggerObjects);
+    //iEvent.getByToken(triggerPrescales_, triggerPrescales);
+
+    bool foundOneTrig = false;
+    const edm::TriggerNames &names = iEvent.triggerNames(*triggerBits);
+    for (unsigned int i = 0, n = triggerBits->size(); i < n; ++i) {
+        for (unsigned int it = 0; it < trigTable_.size(); it++){
+            if (names.triggerName(i).find(trigTable_[it]) != std::string::npos)
+            {
+                NTuple->TrigTable->push_back(names.triggerName(i) );
+                NTuple->TrigResult->push_back(triggerBits->accept(i));
+		//NTuple->TrigPrescales->push_back(triggerPrescales->getPrescaleForIndex(i));
+                foundOneTrig = true;
+            }
+        }
+    }
+    if ( iEvent.isRealData() && !foundOneTrig) return;
+    if (NTuple->TrigTable->size() == 0)
+    {
+      NTuple->TrigTable->push_back("FINAL");
+      NTuple->TrigResult->push_back(false);
+    }
+    else
+    {
+      NTuple->TrigTable->push_back( "FINAL" );
+      NTuple->TrigResult->push_back( true );
+    }
+    
+   */ 
+    
+    // Get magnetic field
     
     edm::ESHandle<MagneticField> bFieldHandle;
     iSetup.get<IdealMagneticFieldRecord>().get(bFieldHandle);      
@@ -324,7 +358,15 @@ BsToMuMuGammaNTuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup&
 		    if(bsDaughter.pdgId() ==  13) muPMul++;
 		    if(bsDaughter.pdgId() ==  22) phoMul++;
 		}
-		if(muMMul!=1 or muPMul!=1 or phoMul!=1 )
+		if(muMMul!=1 or muPMul!=1)
+		{
+			muMMul=0;
+			muPMul=0;
+			phoMul=0;
+			continue;
+		}
+	
+	       if(doBsToMuMuGamma and phoMul!=1)
 		{
 			muMMul=0;
 			muPMul=0;
@@ -338,20 +380,20 @@ BsToMuMuGammaNTuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup&
 		    if(bsDaughter.pdgId() == -13) 
 		    {
 			(NTuple->gen_BsMuonM_pt).push_back(bsDaughter.pt());
-			(NTuple->gen_BsMuonM_eta).push_back(bsDaughter.pt());
-			(NTuple->gen_BsMuonM_phi).push_back(bsDaughter.pt());
+			(NTuple->gen_BsMuonM_eta).push_back(bsDaughter.eta());
+			(NTuple->gen_BsMuonM_phi).push_back(bsDaughter.phi());
 		    }
 		    if(bsDaughter.pdgId() ==  13)
 		    {
 			(NTuple->gen_BsMuonP_pt).push_back(bsDaughter.pt());
-			(NTuple->gen_BsMuonP_eta).push_back(bsDaughter.pt());
-			(NTuple->gen_BsMuonP_phi).push_back(bsDaughter.pt());
+			(NTuple->gen_BsMuonP_eta).push_back(bsDaughter.eta());
+			(NTuple->gen_BsMuonP_phi).push_back(bsDaughter.phi());
 		    }
 		    if(bsDaughter.pdgId() ==  22)
 		    {
 			(NTuple->gen_BsPhoton_pt).push_back(bsDaughter.pt());
-			(NTuple->gen_BsPhoton_eta).push_back(bsDaughter.pt());
-			(NTuple->gen_BsPhoton_phi).push_back(bsDaughter.pt());
+			(NTuple->gen_BsPhoton_eta).push_back(bsDaughter.eta());
+			(NTuple->gen_BsPhoton_phi).push_back(bsDaughter.phi());
 	
 		    }
 		}
@@ -365,7 +407,10 @@ BsToMuMuGammaNTuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup&
 		break;
 	
         }
-	
+	(NTuple->gen_BsMuonMMultiplicity).push_back(muMMul);
+	(NTuple->gen_BsMuonPMultiplicity).push_back(muPMul);
+	(NTuple->gen_BsPhotonMultiplicity).push_back(phoMul);
+
 	bool hasAValidMCCandidate= true;
 	if(muMMul!=1 or muPMul!=1 ) 
 	{
@@ -396,7 +441,6 @@ BsToMuMuGammaNTuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup&
          
          if(aMuon.pt()  < pTMinMuons) continue;
 	 aMuonInnerTrack= aMuon.innerTrack();
-         
 	 
 	 (NTuple->muon_pt		      ).push_back(aMuon.pt());
          (NTuple->muon_eta		      ).push_back(aMuon.eta());
