@@ -45,6 +45,9 @@
 #include "FWCore/Framework/interface/MakerMacros.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
+#include "DataFormats/Math/interface/LorentzVector.h"
+#include "DataFormats/Candidate/interface/Candidate.h"
+#include "DataFormats/Candidate/interface/LeafCandidate.h"
 #include "DataFormats/Common/interface/Handle.h"
 #include "DataFormats/Math/interface/deltaR.h"
 #include "DataFormats/MuonReco/interface/Muon.h"
@@ -105,6 +108,7 @@
 
 
 using reco::TrackCollection;
+typedef math::XYZTLorentzVector LorentzVector;
 
 class BsToMuMuGammaNTuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
 public:
@@ -176,7 +180,11 @@ private:
 
   RefCountedKinematicTree mumuVertexFitTree;
 	 
-  TLorentzVector bsDimuon_lv;
+  TLorentzVector bsDimuon_lv,sc_p4_;
+  LorentzVector scp4;
+  reco::LeafCandidate scPhoton;
+  reco::CompositeCandidate mmg;
+
 };
 
 //
@@ -643,10 +651,11 @@ BsToMuMuGammaNTuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup&
       (NTuple->mupdzBS ).push_back(muTrackpTT.track().dz(  (beamSpot.position() )));
       
       //                     (NTuple->mupKinkChi2).push_back(iMuonP->combinedQuality().trkKink);
-      (NTuple->mupFracHits).push_back(static_cast<double>(muTrackp->hitPattern().numberOfValidHits()) / static_cast<double>(muTrackp->hitPattern().numberOfValidHits() +
-															   muTrackp->hitPattern().numberOfLostHits(reco::HitPattern::TRACK_HITS) +
-															   muTrackp->hitPattern().numberOfLostHits(reco::HitPattern::MISSING_INNER_HITS) +
-															   muTrackp->hitPattern().numberOfLostHits(reco::HitPattern::MISSING_OUTER_HITS)));
+      (NTuple->mupFracHits).push_back(static_cast<double>(muTrackp->hitPattern().numberOfValidHits()) / 
+                                                   (  muTrackp->hitPattern().numberOfValidHits() +
+						      muTrackp->hitPattern().numberOfLostHits(reco::HitPattern::TRACK_HITS) +
+						      muTrackp->hitPattern().numberOfLostHits(reco::HitPattern::MISSING_INNER_HITS) +
+						      muTrackp->hitPattern().numberOfLostHits(reco::HitPattern::MISSING_OUTER_HITS) ) ) ;
       //                     theDCAXVtx = IPTools::absoluteTransverseImpactParameter(muTrackpTT, bestVtxReFit);
       //                     (NTuple->mupdxyVtx).push_back(theDCAXVtx.second.value());
       //                     (NTuple->mupdzVtx).push_back(muTrackpTT.track().dz(bestVtxReFit.position()));
@@ -671,10 +680,8 @@ BsToMuMuGammaNTuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup&
       for (auto const& scs : { *barrelSCHandle, *endcapSCHandle }) {
         for (uint32_t kk = 0; kk <scs.size(); kk++){
  	    auto &sc = scs.at(kk);
- //	for (reco::SuperClusterCollection::const_iterator sc = scs.begin(); sc != scs.end(); ++sc) {
-	//for (auto const& sc : scs) {
 	  (NTuple->scE)           .push_back(sc.energy());
-	  /*(NTuple->scEt)          .push_back(sc.energy()/cosh(sc.eta()));
+	  (NTuple->scEt)          .push_back(sc.energy()/cosh(sc.eta()));
 	  (NTuple->scEta)         .push_back(sc.eta());
 	  (NTuple->scPhi)         .push_back(sc.phi());
 	  (NTuple->scX)           .push_back(sc.x());
@@ -684,21 +691,26 @@ BsToMuMuGammaNTuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup&
 	  (NTuple->scPhiWidth)    .push_back(sc.phiWidth());        
 	  (NTuple->scRawE)        .push_back(sc.rawEnergy());         
 	  (NTuple->scRawEt)       .push_back(sc.rawEnergy()/cosh(sc.eta()));    
-	  */++num_SC;
+	  ++num_SC;
 
-          reco::CompositeCandidate mmg;
           mmg.addDaughter(muons->at(i), "negative muon");
           mmg.addDaughter(muons->at(j), "pos muon");
-          mmg.addDaughter(scs.at(kk), "photon");
-          //mmg.addDaughter(*sc, "photon2");
-  	  AddFourMomenta addP4;
+          sc_p4_.SetPtEtaPhiE(sc.correctedEnergy()/cosh(sc.eta()),sc.eta(),sc.phi(),sc.correctedEnergy());
+	  scp4.SetPxPyPzE(sc_p4_.Px(),sc_p4_.Py(),sc_p4_.Pz(),sc_p4_.E());
+	  scPhoton.setP4(scp4);
+	  mmg.addDaughter(scPhoton, "photon");
+	  AddFourMomenta addP4;
           addP4.set(mmg);
+
+	
+          mmg.clearDaughters();      
+          mmg.clearRoles();
 	}
       } // loop over barrel and endcap SC
      NTuple->nSC = num_SC;
       
-      muonParticles.clear(); 
-    } // muon positive
+     muonParticles.clear(); 
+   } // muon positive
   } //muon negative
   
   theTree->Fill();
