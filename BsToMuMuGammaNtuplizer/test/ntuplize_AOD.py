@@ -11,8 +11,8 @@ process.GlobalTag.globaltag = cms.string('102X_upgrade2018_realistic_v15')
 process.MessageLogger.cerr.FwkReport.reportEvery = 1
 
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(400) )
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
-#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(200) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1)  )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(200) )
 
 process.options = cms.untracked.PSet( numberOfConcurrentLuminosityBlocks = cms.untracked.uint32(1),
     numberOfConcurrentRuns = cms.untracked.uint32(1),
@@ -50,6 +50,12 @@ process.decayfilter = cms.EDFilter("GenDecayKineFilter",
 )
 
 process.Ntuples = cms.EDAnalyzer("BsToMuMuGammaNTuplizer",
+	TriggerNames = cms.vstring("HLT_DoubleMu4_3_Bs_v14",
+	                           "HLT_DoubleMu4_3_Jpsi_v2",
+				   "HLT_DoubleMu4_JpsiTrk_Displaced_v15",
+				   "HLT_DoubleMu4_LowMassNonResonantTrk_Displaced_v15",
+				   "HLT_DoubleMu4_Mass3p8_DZ_PFHT350_v8"),
+	HLTResult = cms.InputTag("TriggerResults","","HLT"),
 	muons   =cms.InputTag("muons"),
 	beamSpot = cms.InputTag("offlineBeamSpot"),
 	vertices = cms.InputTag("offlinePrimaryVertices"),

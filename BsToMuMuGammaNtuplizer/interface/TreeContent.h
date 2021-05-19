@@ -83,7 +83,7 @@ class TreeContent
   
   // # Trigger # //
    void SetupTriggerStorageVectors();
-   void SetupTriggerBranches();
+   void SetupTriggerBranches(TTree * theTree);
    void FillTrggerBranches();
    void ClearTrggerStorages();
 

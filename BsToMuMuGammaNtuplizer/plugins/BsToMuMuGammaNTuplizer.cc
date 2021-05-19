@@ -27,11 +27,11 @@
 
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
-
+#include "FWCore/Common/interface/TriggerNames.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
- #include "FWCore/Utilities/interface/InputTag.h"
- #include "DataFormats/TrackReco/interface/Track.h"
- #include "DataFormats/TrackReco/interface/TrackFwd.h"
+#include "FWCore/Utilities/interface/InputTag.h"
+#include "DataFormats/TrackReco/interface/Track.h"
+#include "DataFormats/TrackReco/interface/TrackFwd.h"
 
 
 
@@ -195,7 +195,7 @@ BsToMuMuGammaNTuplizer::BsToMuMuGammaNTuplizer(const edm::ParameterSet& iConfig)
     beamSpotToken_  	   =consumes<reco::BeamSpot>(iConfig.getParameter<edm::InputTag>("beamSpot"));
     primaryVtxToken_       =consumes<reco::VertexCollection>(iConfig.getParameter<edm::InputTag>("vertices"));
     simGenTocken_          =consumes<reco::GenParticleCollection>(iConfig.getParameter<edm::InputTag>("genParticles"));
-    triggerBits_           =consumes<edm::TriggerResults>                    (iConfig.getParameter<edm::InputTag>("HLTBits"));
+    triggerBits_           =consumes<edm::TriggerResults>                    (iConfig.getParameter<edm::InputTag>("HLTResult"));
     //triggerPrescales_      =consumes<pat::PackedTriggerPrescales>            (iConfig.getParameter<edm::InputTag>("prescales"));
    // triggerObjects_   (consumes<pat::TriggerObjectStandAloneCollection> (iConfig.getParameter<edm::InputTag>("objects"));
     
@@ -259,13 +259,13 @@ BsToMuMuGammaNTuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup&
     const edm::TriggerNames& triggerNames_ = iEvent.triggerNames(*hltTriggerResults);
 
     for (unsigned int itrig = 0; itrig < hltTriggerResults->size(); itrig++){
+//        std::cout<<" i = "<<itrig<<", Name  : "<<triggerNames_.triggerName(itrig)<<" \n";
 
       // Only consider the triggered case.                                                                                                                          
       if ((*hltTriggerResults)[itrig].accept() == 1)
       {
         std::string triggername = triggerNames_.triggerName(itrig);
         int triggerprescale = hltConfig_.prescaleValue(itrig, triggername);
-        
         // Loop over our interested HLT trigger names to find if this event contains.
         for (unsigned int it=0; it<TriggerNames_.size(); it++){
           if (triggername.find(TriggerNames_[it]) != std::string::npos) 
@@ -277,6 +277,11 @@ BsToMuMuGammaNTuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup&
          }
        }
       }
+   }
+   else
+   {
+	std::cout<<" Trigger result Not valid !!"<<"\n";
+	
    }
    NTuple->FillTrggerBranches();
     
@@ -436,7 +441,7 @@ BsToMuMuGammaNTuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup&
     {
     	 auto &aMuon=muons->at(i);
          
-         if(aMuon.pt()  < pTMinMuons) continue;
+	 if(aMuon.pt()  < pTMinMuons) continue;
 	 aMuonInnerTrack= aMuon.innerTrack();
 	 
 	 (NTuple->muon_pt		      ).push_back(aMuon.pt());
