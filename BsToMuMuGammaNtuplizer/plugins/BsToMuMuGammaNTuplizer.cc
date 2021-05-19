@@ -148,7 +148,7 @@ class BsToMuMuGammaNTuplizer : public edm::one::EDAnalyzer<edm::one::SharedResou
 
 
       
-      //edm::EDGetTokenT<edm::TriggerResults>                    triggerBits_;
+      edm::EDGetTokenT<edm::TriggerResults>                    triggerBits_;
       //edm::EDGetTokenT<pat::TriggerObjectStandAloneCollection> triggerObjects_;
       //edm::EDGetTokenT<pat::PackedTriggerPrescales>            triggerPrescales_;
       //std::vector<std::string> trigTable_;
@@ -170,6 +170,9 @@ class BsToMuMuGammaNTuplizer : public edm::one::EDAnalyzer<edm::one::SharedResou
 	 RefCountedKinematicTree mumuVertexFitTree;
 	 
 	 TLorentzVector bsDimuon_lv;
+      
+    // Trigger bookkeeping vars  
+      std::vector<std::string> TriggerNames_;
 };
 
 //
@@ -184,17 +187,17 @@ class BsToMuMuGammaNTuplizer : public edm::one::EDAnalyzer<edm::one::SharedResou
 // constructors and destructor
 //
 BsToMuMuGammaNTuplizer::BsToMuMuGammaNTuplizer(const edm::ParameterSet& iConfig) 
-: muonToken_(consumes<reco::MuonCollection>(iConfig.getParameter<edm::InputTag>("muons")))
+: muonToken_(consumes<reco::MuonCollection>(iConfig.getParameter<edm::InputTag>("muons"))),
+  TriggerNames_(iConfig.getParameter<std::vector<std::string>>("TriggerNames"))
 {
    //now do what ever initialization is needed
  
     beamSpotToken_  	   =consumes<reco::BeamSpot>(iConfig.getParameter<edm::InputTag>("beamSpot"));
     primaryVtxToken_       =consumes<reco::VertexCollection>(iConfig.getParameter<edm::InputTag>("vertices"));
     simGenTocken_          =consumes<reco::GenParticleCollection>(iConfig.getParameter<edm::InputTag>("genParticles"));
-    //triggerBits_           =consumes<edm::TriggerResults>                    (iConfig.getParameter<edm::InputTag>("HLTBits"));
+    triggerBits_           =consumes<edm::TriggerResults>                    (iConfig.getParameter<edm::InputTag>("HLTBits"));
     //triggerPrescales_      =consumes<pat::PackedTriggerPrescales>            (iConfig.getParameter<edm::InputTag>("prescales"));
-    //trigTable_             =iConfig.getParameter<std::vector<std::string> >("TriggerNames");   
-    //triggerObjects_   (consumes<pat::TriggerObjectStandAloneCollection> (iConfig.getParameter<edm::InputTag>("objects"));
+   // triggerObjects_   (consumes<pat::TriggerObjectStandAloneCollection> (iConfig.getParameter<edm::InputTag>("objects"));
     
     //l1Table_           = iConfig.getParameter<std::vector<std::string> >("L1Names");   
     //mcGenToken_        = consumes<reco::GenParticleCollection >(iConfig.getParameter<edm::InputTag>(""));
@@ -217,7 +220,7 @@ BsToMuMuGammaNTuplizer::BsToMuMuGammaNTuplizer(const edm::ParameterSet& iConfig)
     isMC=iConfig.getParameter<bool>("isMC");
     doBsToMuMuGamma=iConfig.getParameter<bool>("doBsToMuMuGamma");
     
-    NTuple = new TreeContent;
+    NTuple = new TreeContent(TriggerNames_);
     Utility= new Utils();
     muonMass= Utility->muonMass;
     muonMassErr= Utility->muonMassErr;
@@ -247,41 +250,35 @@ void
 BsToMuMuGammaNTuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
    using namespace edm;
- /*
-    edm::Handle<edm::TriggerResults>                    triggerBits;
-    //edm::Handle<pat::TriggerObjectStandAloneCollection> triggerObjects;
-    //edm::Handle<pat::PackedTriggerPrescales>            triggerPrescales;
+ 
+    edm::Handle<edm::TriggerResults>     hltTriggerResults;
+    iEvent.getByToken(triggerBits_,      hltTriggerResults);
+ 
+    HLTConfigProvider hltConfig_;
+    if (hltTriggerResults.isValid()) {
+    const edm::TriggerNames& triggerNames_ = iEvent.triggerNames(*hltTriggerResults);
 
-    iEvent.getByToken(triggerBits_,      triggerBits);
-    //iEvent.getByToken(triggerObjects_,   triggerObjects);
-    //iEvent.getByToken(triggerPrescales_, triggerPrescales);
+    for (unsigned int itrig = 0; itrig < hltTriggerResults->size(); itrig++){
 
-    bool foundOneTrig = false;
-    const edm::TriggerNames &names = iEvent.triggerNames(*triggerBits);
-    for (unsigned int i = 0, n = triggerBits->size(); i < n; ++i) {
-        for (unsigned int it = 0; it < trigTable_.size(); it++){
-            if (names.triggerName(i).find(trigTable_[it]) != std::string::npos)
+      // Only consider the triggered case.                                                                                                                          
+      if ((*hltTriggerResults)[itrig].accept() == 1)
+      {
+        std::string triggername = triggerNames_.triggerName(itrig);
+        int triggerprescale = hltConfig_.prescaleValue(itrig, triggername);
+        
+        // Loop over our interested HLT trigger names to find if this event contains.
+        for (unsigned int it=0; it<TriggerNames_.size(); it++){
+          if (triggername.find(TriggerNames_[it]) != std::string::npos) 
             {
-                NTuple->TrigTable->push_back(names.triggerName(i) );
-                NTuple->TrigResult->push_back(triggerBits->accept(i));
-		//NTuple->TrigPrescales->push_back(triggerPrescales->getPrescaleForIndex(i));
-                foundOneTrig = true;
+              // save the no versioned case
+              (NTuple->TrigNames).push_back(TriggerNames_[it]);
+              (NTuple->TrigPrescales).push_back(triggerprescale);
             }
-        }
-    }
-    if ( iEvent.isRealData() && !foundOneTrig) return;
-    if (NTuple->TrigTable->size() == 0)
-    {
-      NTuple->TrigTable->push_back("FINAL");
-      NTuple->TrigResult->push_back(false);
-    }
-    else
-    {
-      NTuple->TrigTable->push_back( "FINAL" );
-      NTuple->TrigResult->push_back( true );
-    }
-    
-   */ 
+         }
+       }
+      }
+   }
+   NTuple->FillTrggerBranches();
     
     // Get magnetic field
     

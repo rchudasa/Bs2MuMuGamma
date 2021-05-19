@@ -1,8 +1,16 @@
 #include "Bs2MuMuGamma/BsToMuMuGammaNtuplizer/interface/TreeContent.h"
 #include <iostream>
 
+TreeContent::TreeContent (std::vector<string> TrigList): TrigTable(TrigList)
+{
+	TreeContent();
+}
 TreeContent::TreeContent ()
 {
+  TrigTable_store=nullptr;
+  TrigResult_store=nullptr;
+  TrigPrescales_store=nullptr;
+  SetupTriggerStorageVectors();
   ClearScalars();
 }
 
@@ -190,12 +198,69 @@ void TreeContent::ClearNTuple ()
 {
   ClearScalars();
   ClearVectors();
+  ClearTrggerStorages();
 }
 
 void TreeContent::ClearMonteCarlo ()
 {
   ClearScalarsMonteCarlo();
   ClearVectorsMonteCarlo();
+}
+
+void TreeContent::SetupTriggerStorageVectors()
+{
+	auto numTrigs = TrigTable.size();
+	TrigPrescale_store = new std::vector<int> [numTrigs];
+	TrigResult_store   = new std::vector<bool>[numTrigs];
+}
+
+void TreeContent::FillTrggerBranches()
+{
+	for(auto i=0;i<TrigTable.size();i++)
+	{
+	   int foundTrig=-1;
+	   for(auto j=0;j<TrigNames.size();j++)
+	   {
+		if (TrigNames[j].find(TrigTable[i]) != string::npos)
+		{
+			foundTrig=j;
+		}
+
+	   }
+
+	   if(foundTrig >-1) 
+	   {
+		TrigResult_store[i].push_back(true);	
+		TrigPrescale_store[i].push_back(TrigPrescales[foundTrig]);	
+           }
+	   else
+	  {
+		TrigResult_store[i].push_back(false);	
+		TrigPrescale_store[i].push_back(-1);	
+	  }
+	}
+	
+}
+
+void TreeContent::SetupTriggerBranches(TTree * theTree)
+{
+	std::string branchName;
+	for(auto i=0;i<TrigTable.size();i++)
+	{
+		branchName=TrigTable[i]+"_result";
+                theTree->Branch(branchName.c_str(),&(TrigResult_store[i]));
+		branchName=TrigTable[i]+"_prescale";
+                theTree->Branch(branchName.c_str(),&(TrigPrescale_store[i]));
+	}
+}
+
+void TreeContent::ClearTrggerStorages()
+{
+	for(auto i=0;i<TrigTable.size();i++)
+	{
+		TrigResult_store[i].clear();
+		TrigPrescale_store[i].clear();
+	}
 }
 
 void TreeContent::MakeTreeBranches (TTree* theTree)
@@ -217,6 +282,9 @@ void TreeContent::MakeTreeBranches (TTree* theTree)
   theTree->Branch("TrigPrescales", &TrigPrescales);
   theTree->Branch("L1Table",       &L1Table);
   theTree->Branch("L1Prescales",   &L1Prescales);
+   
+   SetupTriggerBranches(theTree);
+
   //theTree->Branch("hltObjs"    ,   &hltObjs);
 
    theTree->Branch("nMuons"			,  nMuons			);

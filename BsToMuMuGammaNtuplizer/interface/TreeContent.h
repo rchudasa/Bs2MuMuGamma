@@ -14,6 +14,7 @@ class TreeContent
  public:
   
    TreeContent ();
+   TreeContent (std::vector<std::string> TrigList);
   ~TreeContent ();
 
   void Init ();
@@ -42,8 +43,14 @@ class TreeContent
   // # Trigger #
   // ###########
   std::vector<std::string>  TrigTable;
+  std::vector<std::string>  TrigNames;
   std::vector<bool>         TrigResult;
   std::vector<int>          TrigPrescales;
+  
+  std::vector<std::string>  *TrigTable_store;
+  std::vector<bool>         *TrigResult_store;
+  std::vector<int>          *TrigPrescales_store;
+  
   std::vector<std::string>  L1Table;
   std::vector<int>          L1Prescales;
 
@@ -74,6 +81,12 @@ class TreeContent
   // ################################
   double                    bsX, bsY;
   
+  // # Trigger # //
+   void SetupTriggerStorageVectors();
+   void SetupTriggerBranches();
+   void FillTrggerBranches();
+   void ClearTrggerStorages();
+
   // # reco::Muons #
   
   std::vector<double>   muon_pt, muon_eta, muon_phi, mum_dz, muon_dxy;
