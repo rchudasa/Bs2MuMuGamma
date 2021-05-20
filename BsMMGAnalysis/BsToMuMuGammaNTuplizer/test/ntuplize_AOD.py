@@ -10,8 +10,8 @@ process.GlobalTag.globaltag = cms.string('106X_upgrade2018_realistic_v15_L1v1')
 
 process.MessageLogger.cerr.FwkReport.reportEvery = 1
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(400) )
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(20) )
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(200) )
 
 process.options = cms.untracked.PSet( numberOfConcurrentLuminosityBlocks = cms.untracked.uint32(1),
@@ -68,6 +68,14 @@ process.Ntuples = cms.EDAnalyzer("BsToMuMuGammaNTuplizer",
 	dimuon_maxLStoBS  	= cms.untracked.double(1e5),	
 	dimuon_maxDCAMuMu 	= cms.untracked.double(1e5),	
 	dimuon_maxCosAlphaToBS 	= cms.untracked.double(1e5),	
+    	doGenParticles     = cms.bool(True),
+   	doMuons            = cms.bool(True),
+   	doPhotons          = cms.bool(True),
+    	doPFPhotons        = cms.bool(True),
+    	doSuperClusters    = cms.bool(True),
+    	genParticleSrc     = cms.untracked.InputTag("genParticles"),
+    	gedPhotonSrc       = cms.untracked.InputTag("gedPhotons"),
+    	pfPhotonSrc        = cms.untracked.InputTag("particleFlow"),
 	verbose  = cms.bool(False),
 	doBsToMuMuGamma = cms.bool(True),
 	isMC = cms.bool(True),
