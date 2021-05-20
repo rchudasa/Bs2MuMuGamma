@@ -6,13 +6,13 @@ process.load('Configuration.Geometry.GeometryIdeal_cff')
 process.load('FWCore.MessageService.MessageLogger_cfi')
 process.load('Configuration.StandardSequences.MagneticField_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
-process.GlobalTag.globaltag = cms.string('102X_upgrade2018_realistic_v15')
+process.GlobalTag.globaltag = cms.string('106X_upgrade2018_realistic_v15_L1v1')
 
 process.MessageLogger.cerr.FwkReport.reportEvery = 1
 
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(400) )
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1)  )
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(200) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(200) )
 
 process.options = cms.untracked.PSet( numberOfConcurrentLuminosityBlocks = cms.untracked.uint32(1),
     numberOfConcurrentRuns = cms.untracked.uint32(1),
@@ -28,9 +28,10 @@ process.options = cms.untracked.PSet( numberOfConcurrentLuminosityBlocks = cms.u
 process.source = cms.Source("PoolSource",
      duplicateCheckMode=cms.untracked.string("noDuplicateCheck"),
     fileNames = cms.untracked.vstring(
-   'file:/eos/user/a/athachay/workarea/data/BsToMuMuGamma/RunIIAutumn18DRPremix/BsToMuMuGamma_BMuonFilter_SoftQCDnonD_TuneCP5_13TeV-evtgen-pythia8/AODSIM/102X_upgrade2018_realistic_v15-v1/606765BD-9BB4-9741-925C-A0C69B933039.root',      
+   #'file:/eos/user/a/athachay/workarea/data/BsToMuMuGamma/RunIIAutumn18DRPremix/BsToMuMuGamma_BMuonFilter_SoftQCDnonD_TuneCP5_13TeV-evtgen-pythia8/AODSIM/102X_upgrade2018_realistic_v15-v1/606765BD-9BB4-9741-925C-A0C69B933039.root',      
  #  'file:/afs/cern.ch/work/a/athachay/public/BsToMuMuGamma/RunIIAutumn18DRPremix/BsToMuMuGamma_BMuonFilter_SoftQCDnonD_TuneCP5_13TeV-evtgen-pythia8/AODSIM/102X_upgrade2018_realistic_v15-v1/606765BD-9BB4-9741-925C-A0C69B933039.root',      
    #'file:DoublePhotonGun/DoublePhoton0To40FlatPtAODSIM_HI_Reco_1.root',      
+   'file:/afs/cern.ch/work/r/rchudasa/private/bsmumu/Run2_analysis/CMSSW_10_6_20/src/BsMMGAnalysis/PhotonAnalyzer/test/AEFD418A-0A8D-414C-A8AC-86EE20287BDF.root'      
     )
 )
 process.TFileService = cms.Service("TFileService",
@@ -50,15 +51,11 @@ process.decayfilter = cms.EDFilter("GenDecayKineFilter",
 )
 
 process.Ntuples = cms.EDAnalyzer("BsToMuMuGammaNTuplizer",
-	TriggerNames = cms.vstring("HLT_DoubleMu4_3_Bs_v14",
-	                           "HLT_DoubleMu4_3_Jpsi_v2",
-				   "HLT_DoubleMu4_JpsiTrk_Displaced_v15",
-				   "HLT_DoubleMu4_LowMassNonResonantTrk_Displaced_v15",
-				   "HLT_DoubleMu4_Mass3p8_DZ_PFHT350_v8"),
-	HLTResult = cms.InputTag("TriggerResults","","HLT"),
 	muons   =cms.InputTag("muons"),
 	beamSpot = cms.InputTag("offlineBeamSpot"),
 	vertices = cms.InputTag("offlinePrimaryVertices"),
+    	MustacheSCBarrelSrc= cms.InputTag("particleFlowSuperClusterECAL:particleFlowSuperClusterECALBarrel"),
+    	MustacheSCEndcapSrc= cms.InputTag("particleFlowSuperClusterECAL:particleFlowSuperClusterECALEndcapWithPreshower"),
 	muon_EtaMax      	= cms.untracked.double(1e3),	 
 	muon_dcaMAX 		= cms.untracked.double(1e3),	
 	muon_minPt  		= cms.untracked.double(1.0),	

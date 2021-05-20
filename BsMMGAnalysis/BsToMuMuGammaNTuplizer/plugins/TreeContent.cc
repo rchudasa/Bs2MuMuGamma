@@ -1,25 +1,8 @@
-#include "Bs2MuMuGamma/BsToMuMuGammaNtuplizer/interface/TreeContent.h"
+#include "BsMMGAnalysis/BsToMuMuGammaNTuplizer/interface/TreeContent.h"
 #include <iostream>
 
-TreeContent::TreeContent (std::vector<std::string> TrigList): TrigTable(TrigList)
-{
-
-	for(auto &xx : TrigTable)
-	{
-   
-	}
-        TrigTable_store=nullptr;
-        TrigResult_store=nullptr;
-        TrigPrescales_store=nullptr;
-        ClearScalars();
-        SetupTriggerStorageVectors();
-
-}
 TreeContent::TreeContent ()
 {
-  TrigTable_store=nullptr;
-  TrigResult_store=nullptr;
-  TrigPrescales_store=nullptr;
   ClearScalars();
 }
 
@@ -29,7 +12,8 @@ TreeContent::~TreeContent ()
 
 void TreeContent::ClearScalars ()
 {
-   nMuons=0;
+   nMuM=0;
+   nMuP=0;
       
       // ## BEAMSOPT STUFF  ## //
    beamspot_x  = 0.0   ;
@@ -54,14 +38,138 @@ void TreeContent::ClearScalars ()
 void TreeContent::ClearVectors ()
 {
   // ### Trigger ###
-  //TrigTable.clear();
-  TrigNames.clear();
-  TrigResult.clear();
+  TrigTable.clear();
   TrigPrescales.clear();
   L1Table.clear();
   L1Prescales.clear();
+
+  // ### mu+ mu- variables ###
+    mumuPt.clear();
+    mumuEta.clear();
+    mumuRapidity.clear();
+    mumuPhi.clear();
+    mumuMass.clear();
+    mumuMassE.clear();
+    mumuPx.clear();
+    mumuPy.clear();
+    mumuPz.clear();
+    mumuDR.clear();
+  
+  
+    mumuVtxCL.clear();
+    mumuVtxX.clear();
+    mumuVtxY.clear();
+    mumuVtxZ.clear();  
+    mumuVtxChi2.clear();
+    mumuVtxNdof.clear();
+    mumuVtxProb.clear();
+    mumuVtxIsGoodFit.clear();
+    mumuCosAlphaBS.clear();
+    mumuCosAlphaBSE.clear(); 
+    mumuLBS.clear();
+    mumuLBSE.clear();
+    mumuDCA.clear();
+    mumuLS.clear();
+    mumuLSErr.clear();
+    
+    
+  
+  
+   mumHighPurity.clear();
+   mumPt.clear();
+   mumEta.clear();
+   mumPhi.clear();
+   mumCL.clear(); 
+   mumNormChi2.clear();
+   mumPx.clear();
+   mumPy.clear();
+   mumPz.clear();
+   mumDCAVtx.clear();
+   mumDCAVtxE.clear();
+   mumDCABS.clear();
+   mumDCABSE.clear();
+   mumKinkChi2.clear();
+   mumFracHits.clear();
+   mumdxyBS.clear();
+   mumdzBS.clear();
+   mumMinIP2D.clear();
+   mumMinIP2DE.clear();
+   mumMinIP.clear();
+   mumMinIPS.clear();
+   mumDeltaRwithMC.clear();
+   mumCat.clear();
+   mumCharge.clear();
+   mumNPixHits.clear();
+   mumNPixLayers.clear();
+   mumNTrkHits.clear();
+   mumNTrkLayers.clear();
+   mumNMuonHits.clear();
+   mumNMatchStation.clear();
+   mumIso.clear();
+   mumIsoPt.clear();
+   mumIsodR.clear();
+   mum_isGlobalMuon.clear();
+   mum_isTrackerMuon.clear();
+   mum_StandAloneMuon.clear();
+   mum_isCaloMuon.clear();
+   mum_isPFMuon.clear();
+  
+  
+  
+   mupHighPurity.clear();
+   mupPt.clear();
+   mupEta.clear();
+   mupPhi.clear();
+   mupCL.clear(); 
+   mupNormChi2.clear();
+   mupPx.clear();
+   mupPy.clear();
+   mupPz.clear();
+   mupDCAVtx.clear();
+   mupDCAVtxE.clear();
+   mupDCABS.clear();
+   mupDCABSE.clear();
+   mupKinkChi2.clear();
+   mupFracHits.clear();
+   mupdxyBS.clear();
+   mupdzBS.clear();
+   mupMinIP2D.clear();
+   mupMinIP2DE.clear();
+   mupMinIP.clear();
+   mupMinIPS.clear();
+   mupDeltaRwithMC.clear();
+   mupCat.clear();
+   mupCharge.clear();
+   mupNPixHits.clear();
+   mupNPixLayers.clear();
+   mupNTrkHits.clear();
+   mupNTrkLayers.clear();
+   mupNMuonHits.clear();
+   mupNMatchStation.clear();
+   mupIso.clear();
+   mupIsoPt.clear();
+   mupIsodR.clear();
+   mup_isGlobalMuon.clear();
+   mup_isTrackerMuon.clear();
+   mup_StandAloneMuon.clear();
+   mup_isCaloMuon.clear();
+   mup_isPFMuon.clear();
+
+  nSC = 0;
+  scE         .clear();
+  scEt         .clear();
+  scEta        .clear();
+  scPhi        .clear();   
+  scX          .clear();      
+  scY          .clear();      
+  scZ          .clear();      
+  scEtaWidth   .clear();         
+  scPhiWidth   .clear();         
+  scRawE       .clear();         
+  scRawEt      .clear();       
+
  
-   muon_dcaToBS.clear();
+/*   muon_dcaToBS.clear();
    muon_dcaToBS_error.clear();
    muon_pt		.clear();
    muon_eta		.clear();
@@ -149,7 +257,7 @@ void TreeContent::ClearVectors ()
     dimuon_cosAlphaBS_error.clear();
     dimuon_MuPIdx.clear();
     dimuon_MuMIdx.clear();
-    dimuon_isGoodVertexFit.clear();
+    dimuon_isGoodVertexFit.clear();*/
 
   
   // # offlinePrimaryVertices # //
@@ -187,7 +295,7 @@ void TreeContent::ClearVectors ()
   gen_BsPhoton_phi.clear();
   gen_BsPhotonMultiplicity.clear() ;
   gen_BsMuonMMultiplicity.clear() ;
-  gen_BsMuonPMultiplicity.clear();
+  gen_BsMuonMPultiplicity.clear();
 
 
   ClearVectorsMonteCarlo();
@@ -208,68 +316,12 @@ void TreeContent::ClearNTuple ()
 {
   ClearScalars();
   ClearVectors();
-  ClearTrggerStorages();
 }
 
 void TreeContent::ClearMonteCarlo ()
 {
   ClearScalarsMonteCarlo();
   ClearVectorsMonteCarlo();
-}
-
-void TreeContent::SetupTriggerStorageVectors()
-{
-	auto numTrigs = TrigTable.size();
-	TrigPrescales_store = new std::vector<int> [numTrigs];
-	TrigResult_store   = new std::vector<bool>[numTrigs];
-}
-
-void TreeContent::FillTrggerBranches()
-{
-	for(uint32_t i=0;i<TrigTable.size();i++)
-	{
-	   int foundTrig=-1;
-	   for(uint32_t j=0;j<TrigNames.size();j++)
-	   {
-		if (TrigNames[j].find(TrigTable[i]) != std::string::npos)
-		{
-			foundTrig=j;
-		}
-	   }
-
-	   if(foundTrig >-1) 
-	   {
-		TrigResult_store[i].push_back(true);	
-		TrigPrescales_store[i].push_back(TrigPrescales[foundTrig]);	
-           }
-	   else
-	  {
-		TrigResult_store[i].push_back(false);	
-		TrigPrescales_store[i].push_back(-1);	
-	  }
-	}
-	
-}
-
-void TreeContent::SetupTriggerBranches(TTree * theTree)
-{
-	std::string branchName;
-	for(uint32_t i=0;i<TrigTable.size();i++)
-	{
-		branchName=TrigTable[i]+"_result";
-                theTree->Branch(branchName.c_str(),&(TrigResult_store[i]));
-		branchName=TrigTable[i]+"_prescale";
-                theTree->Branch(branchName.c_str(),&(TrigPrescales_store[i]));
-	}
-}
-
-void TreeContent::ClearTrggerStorages()
-{
-	for(uint32_t i=0;i<TrigTable.size();i++)
-	{
-		TrigResult_store[i].clear();
-		TrigPrescales_store[i].clear();
-	}
 }
 
 void TreeContent::MakeTreeBranches (TTree* theTree)
@@ -287,17 +339,137 @@ void TreeContent::MakeTreeBranches (TTree* theTree)
 
   // ### Trigger ###
   theTree->Branch("TrigTable",     &TrigTable);
-  theTree->Branch("TrigResult",    &TrigResult);
   theTree->Branch("TrigPrescales", &TrigPrescales);
   theTree->Branch("L1Table",       &L1Table);
   theTree->Branch("L1Prescales",   &L1Prescales);
-   
-   SetupTriggerBranches(theTree);
-
   //theTree->Branch("hltObjs"    ,   &hltObjs);
 
-   theTree->Branch("nMuons"			,  nMuons			);
-   theTree->Branch("muon_pt"			,  &muon_pt			);
+
+  // ### mu+ mu- Mass ###
+  theTree->Branch("mumuPt",    &mumuPt);
+  theTree->Branch("mumuEta",   &mumuEta);
+  theTree->Branch("mumuRapidity",&mumuRapidity);
+  theTree->Branch("mumuPhi",   &mumuPhi);
+  theTree->Branch("mumuMass",  &mumuMass);
+  theTree->Branch("mumuMassE", &mumuMassE);
+  theTree->Branch("mumuPx",    &mumuPx);
+  theTree->Branch("mumuPy",    &mumuPy);
+  theTree->Branch("mumuPz",    &mumuPz);
+  theTree->Branch("mumuDR",    &mumuDR);
+
+  // ### mu+ mu- Vtx ###
+  theTree->Branch("mumuVtxCL",       &mumuVtxCL);
+  theTree->Branch("mumuVtxX",        &mumuVtxX);
+  theTree->Branch("mumuVtxY",        &mumuVtxY);
+  theTree->Branch("mumuVtxZ",        &mumuVtxZ);
+  theTree->Branch("mumuVtxChi2",     &mumuVtxChi2);
+  theTree->Branch("mumuVtxNdof",     &mumuVtxNdof);
+  theTree->Branch("mumuVtxProb",     &mumuVtxProb);
+  theTree->Branch("mumuVtxIsGoodFit",&mumuVtxIsGoodFit);
+  theTree->Branch("mumuCosAlphaBS",  &mumuCosAlphaBS);
+  theTree->Branch("mumuCosAlphaBSE", &mumuCosAlphaBSE);
+  theTree->Branch("mumuLBS",         &mumuLBS);
+  theTree->Branch("mumuLBSE",        &mumuLBSE);
+  theTree->Branch("mumuDCA",         &mumuDCA);
+  theTree->Branch("mumuLS",          &mumuLS);
+  theTree->Branch("mumuLSErr",       &mumuLSErr);
+
+  // ### mu- ###  
+  theTree->Branch("nMuM",             &nMuM,         "nMuM/i");
+  theTree->Branch("mumHighPurity",    &mumHighPurity);
+  theTree->Branch("mumPt",            &mumPt);
+  theTree->Branch("mumEta",           &mumEta);
+  theTree->Branch("mumPhi",           &mumPhi);
+  theTree->Branch("mumCL",            &mumCL);
+  theTree->Branch("mumNormChi2",      &mumNormChi2);
+  theTree->Branch("mumPx",            &mumPx);
+  theTree->Branch("mumPy",            &mumPy);
+  theTree->Branch("mumPz",            &mumPz);
+  theTree->Branch("mumDCAVtx",        &mumDCAVtx);
+  theTree->Branch("mumDCAVtxE",       &mumDCAVtxE);
+  theTree->Branch("mumDCABS",         &mumDCABS);
+  theTree->Branch("mumDCABSE",        &mumDCABSE);
+  theTree->Branch("mumKinkChi2",      &mumKinkChi2);
+  theTree->Branch("mumFracHits",      &mumFracHits);
+  theTree->Branch("mumdxyBS",         &mumdxyBS );
+  theTree->Branch("mumdzBS",          &mumdzBS);
+  theTree->Branch("mumMinIP2D",       &mumMinIP2D);
+  theTree->Branch("mumMinIP2DE",      &mumMinIP2DE);
+  theTree->Branch("mumMinIP",         &mumMinIP);
+  theTree->Branch("mumMinIPS",        &mumMinIPS);
+  theTree->Branch("mumDeltaRwithMC",  &mumDeltaRwithMC);
+  theTree->Branch("mumCat",           &mumCat);
+  theTree->Branch("mumNPixHits",      &mumNPixHits);
+  theTree->Branch("mumNPixLayers",    &mumNPixLayers);
+  theTree->Branch("mumNTrkHits",      &mumNTrkHits);
+  theTree->Branch("mumNTrkLayers",    &mumNTrkLayers);
+  theTree->Branch("mumNMuonHits",     &mumNMuonHits);
+  theTree->Branch("mumNMatchStation", &mumNMatchStation);
+  theTree->Branch("mumIso",           &mumIso);
+  theTree->Branch("mumIsoPt",         &mumIsoPt);
+  theTree->Branch("mumIsodR",         &mumIsodR);
+  theTree->Branch("mum_isGlobalMuon", &mum_isGlobalMuon);
+  theTree->Branch("mum_isTrackerMuon",&mum_isTrackerMuon);
+  theTree->Branch("mum_StandAloneMuon",&mum_StandAloneMuon);
+  theTree->Branch("mum_isCaloMuon",    &mum_isCaloMuon);
+  theTree->Branch("mum_isPFMuon",      &mum_isPFMuon);
+
+  // ### mu+ ###  
+  theTree->Branch("nMuP",             &nMuP,         "nMuP/i");
+  theTree->Branch("mupHighPurity",    &mupHighPurity);
+  theTree->Branch("mupPt",            &mupPt);
+  theTree->Branch("mupEta",           &mupEta);
+  theTree->Branch("mupPhi",           &mupPhi);
+  theTree->Branch("mupCL",            &mupCL);
+  theTree->Branch("mupNormChi2",      &mupNormChi2);
+  theTree->Branch("mupPx",            &mupPx);
+  theTree->Branch("mupPy",            &mupPy);
+  theTree->Branch("mupPz",            &mupPz);
+  theTree->Branch("mupDCAVtx",        &mupDCAVtx);
+  theTree->Branch("mupDCAVtxE",       &mupDCAVtxE);
+  theTree->Branch("mupDCABS",         &mupDCABS);
+  theTree->Branch("mupDCABSE",        &mupDCABSE);
+  theTree->Branch("mupKinkChi2",      &mupKinkChi2);
+  theTree->Branch("mupFracHits",      &mupFracHits);
+  theTree->Branch("mupdxyBS",         &mupdxyBS );
+  theTree->Branch("mupdzBS",          &mupdzBS);
+  theTree->Branch("mupMinIP2D",       &mupMinIP2D);
+  theTree->Branch("mupMinIP2DE",      &mupMinIP2DE);
+  theTree->Branch("mupMinIP",         &mupMinIP);
+  theTree->Branch("mupMinIPS",        &mupMinIPS);
+  theTree->Branch("mupDeltaRwithMC",  &mupDeltaRwithMC);
+  theTree->Branch("mupCat",           &mupCat);
+  theTree->Branch("mupNPixHits",      &mupNPixHits);
+  theTree->Branch("mupNPixLayers",    &mupNPixLayers);
+  theTree->Branch("mupNTrkHits",      &mupNTrkHits);
+  theTree->Branch("mupNTrkLayers",    &mupNTrkLayers);
+  theTree->Branch("mupNMuonHits",     &mupNMuonHits);
+  theTree->Branch("mupNMatchStation", &mupNMatchStation);
+  theTree->Branch("mupIso",           &mupIso);
+  theTree->Branch("mupIsoPt",         &mupIsoPt);
+  theTree->Branch("mupIsodR",         &mupIsodR);
+  theTree->Branch("mup_isGlobalMuon", &mup_isGlobalMuon);
+  theTree->Branch("mup_isTrackerMuon",&mup_isTrackerMuon);
+  theTree->Branch("mup_StandAloneMuon",&mup_StandAloneMuon);
+  theTree->Branch("mup_isCaloMuon",    &mup_isCaloMuon);
+  theTree->Branch("mup_isPFMuon",      &mup_isPFMuon);
+
+  // MUsrache SC collection
+  theTree->Branch("nSC",        &nSC);
+  theTree->Branch("scE",        &scE);
+  theTree->Branch("scEt",       &scEt);
+  theTree->Branch("scEta",      &scEta);
+  theTree->Branch("scPhi",      &scPhi);
+  theTree->Branch("scX",        &scX);
+  theTree->Branch("scY",        &scY);
+  theTree->Branch("scZ",        &scZ);
+  theTree->Branch("scEtaWidth", &scEtaWidth);
+  theTree->Branch("scPhiWidth", &scPhiWidth);
+  theTree->Branch("scRawE",     &scRawE);
+  theTree->Branch("scRawEt",    &scRawEt);
+
+
+  /* theTree->Branch("muon_pt"			,  &muon_pt			);
    theTree->Branch("muon_eta"		   	,  &muon_eta			);
    theTree->Branch("muon_phi"		   	,  &muon_phi			);
    theTree->Branch("mum_dz"		   	,  &mum_dz			);
@@ -382,7 +554,7 @@ void TreeContent::MakeTreeBranches (TTree* theTree)
    theTree->Branch("dimuon_MuPIdx"			,&dimuon_MuPIdx				);
    theTree->Branch("dimuon_MuMIdx"			,&dimuon_MuMIdx				);
    theTree->Branch("dimuon_isGoodVertexFit"		,&dimuon_isGoodVertexFit		);
-
+*/
    theTree->Branch("beamspot_x"		 	,&beamspot_x		    			);
    theTree->Branch("beamspot_y"			,&beamspot_y		    			);
    theTree->Branch("beamspot_z"			,&beamspot_z		    			);
@@ -433,7 +605,7 @@ void TreeContent::MakeTreeBranches (TTree* theTree)
   theTree->Branch("gen_BsPhoton_phi"		,&gen_BsPhoton_phi		   );
   theTree->Branch("gen_BsPhotonMultiplicity"	,&gen_BsPhotonMultiplicity	   );
   theTree->Branch("gen_BsMuonMMultiplicity"	,&gen_BsMuonMMultiplicity	   );
-  theTree->Branch("gen_BsMuonPMultiplicity"	,&gen_BsMuonPMultiplicity	   );
+  theTree->Branch("gen_BsMuonMPultiplicity"	,&gen_BsMuonMPultiplicity	   );
 
   
 

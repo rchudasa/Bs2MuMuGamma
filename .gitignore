@@ -1,2 +1,3 @@
 *.pyc 
+BsMMGAnalysis/BsToMuMuGammaNTuplizer/test/*.root
 Test/MiniAnalyzer/python/__init__.py

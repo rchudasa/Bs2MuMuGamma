@@ -14,7 +14,6 @@ class TreeContent
  public:
   
    TreeContent ();
-   TreeContent (std::vector<std::string> TrigList);
   ~TreeContent ();
 
   void Init ();
@@ -43,14 +42,7 @@ class TreeContent
   // # Trigger #
   // ###########
   std::vector<std::string>  TrigTable;
-  std::vector<std::string>  TrigNames;
-  std::vector<bool>         TrigResult;
   std::vector<int>          TrigPrescales;
-  
-  std::vector<std::string>  *TrigTable_store;
-  std::vector<bool>         *TrigResult_store;
-  std::vector<int>          *TrigPrescales_store;
-  
   std::vector<std::string>  L1Table;
   std::vector<int>          L1Prescales;
 
@@ -65,7 +57,6 @@ class TreeContent
   // # Pileup information in MC #
   // ############################
   std::vector<double>       bunchXingMC, numInteractionsMC, trueNumInteractionsMC;
-  
   // Comment:
   // - PileupSummaryInfo::getTrueNumInteractions() gives the distribution of the mean number of interactions per crossing.
   // Since this is the mean value of the poisson distribution from which the number of interactions in- and out-of-time are
@@ -80,16 +71,136 @@ class TreeContent
   // # Primary Vertex and Beam Spot #
   // ################################
   double                    bsX, bsY;
-  
-  // # Trigger # //
-   void SetupTriggerStorageVectors();
-   void SetupTriggerBranches(TTree * theTree);
-   void FillTrggerBranches();
-   void ClearTrggerStorages();
 
-  // # reco::Muons #
+  // ### mu+ mu- variables ###
+  std::vector<double>   mumuPt;
+  std::vector<double>   mumuEta;
+  std::vector<double>   mumuRapidity;
+  std::vector<double>   mumuPhi;
+  std::vector<double>   mumuMass;
+  std::vector<double>   mumuMassE;
+  std::vector<double>   mumuPx;
+  std::vector<double>   mumuPy;
+  std::vector<double>   mumuPz;
+  std::vector<double>   mumuDR;
+
+  // ### mu+ mu- Vtx ###
+  std::vector<double>  mumuVtxCL       ;
+  std::vector<double>  mumuVtxX        ;
+  std::vector<double>  mumuVtxY        ;
+  std::vector<double>  mumuVtxZ        ;
+  std::vector<double>  mumuVtxChi2     ;
+  std::vector<double>  mumuVtxNdof     ;
+  std::vector<double>  mumuVtxProb     ;
+  std::vector<bool>    mumuVtxIsGoodFit;
+  std::vector<double>  mumuCosAlphaBS  ;
+  std::vector<double>  mumuCosAlphaBSE ; 
+  std::vector<double>  mumuLBS         ;
+  std::vector<double>  mumuLBSE        ;
+  std::vector<double>  mumuDCA         ;
+  std::vector<double>   mumuLS;
+  std::vector<double>   mumuLSErr;
+
+
   
-  std::vector<double>   muon_pt, muon_eta, muon_phi, mum_dz, muon_dxy;
+  // ### mu- ###
+  int 	               nMuM; 
+  std::vector<bool>    mumHighPurity;
+  std::vector<double>  mumPt;
+  std::vector<double>  mumEta;
+  std::vector<double>  mumPhi;
+  std::vector<double>  mumCL; 
+  std::vector<double>  mumNormChi2;
+  std::vector<double>  mumPx;
+  std::vector<double>  mumPy;
+  std::vector<double>  mumPz;
+  std::vector<double>  mumDCAVtx;
+  std::vector<double>  mumDCAVtxE;
+  std::vector<double>  mumDCABS;
+  std::vector<double>  mumDCABSE;
+  std::vector<double>  mumKinkChi2;
+  std::vector<double>  mumFracHits;
+  std::vector<double>  mumdxyBS;
+  std::vector<double>  mumdzBS;
+  std::vector<double>  mumMinIP2D;
+  std::vector<double>  mumMinIP2DE;
+  std::vector<double>  mumMinIP;
+  std::vector<double>  mumMinIPS;
+  std::vector<double>  mumDeltaRwithMC;
+  std::vector<std::string> mumCat;
+  std::vector<int>     mumCharge;
+  std::vector<int>     mumNPixHits;
+  std::vector<int>     mumNPixLayers;
+  std::vector<int>     mumNTrkHits;
+  std::vector<int>     mumNTrkLayers;
+  std::vector<int>     mumNMuonHits;
+  std::vector<int>     mumNMatchStation;
+  std::vector<float>   mumIso;
+  std::vector<float>   mumIsoPt;
+  std::vector<float>   mumIsodR;
+  std::vector<bool>    mum_isGlobalMuon;
+  std::vector<bool>    mum_isTrackerMuon;
+  std::vector<bool>    mum_StandAloneMuon;
+  std::vector<bool>    mum_isCaloMuon;
+  std::vector<bool>    mum_isPFMuon;
+
+
+  // ### mu+ ###
+  int 	               nMuP; 
+  std::vector<bool>    mupHighPurity;
+  std::vector<double>  mupPt;
+  std::vector<double>  mupEta;
+  std::vector<double>  mupPhi;
+  std::vector<double>  mupCL; 
+  std::vector<double>  mupNormChi2;
+  std::vector<double>  mupPx;
+  std::vector<double>  mupPy;
+  std::vector<double>  mupPz;
+  std::vector<double>  mupDCAVtx;
+  std::vector<double>  mupDCAVtxE;
+  std::vector<double>  mupDCABS;
+  std::vector<double>  mupDCABSE;
+  std::vector<double>  mupKinkChi2;
+  std::vector<double>  mupFracHits;
+  std::vector<double>  mupdxyBS;
+  std::vector<double>  mupdzBS;
+  std::vector<double>  mupMinIP2D;
+  std::vector<double>  mupMinIP2DE;
+  std::vector<double>  mupMinIP;
+  std::vector<double>  mupMinIPS;
+  std::vector<double>  mupDeltaRwithMC;
+  std::vector<std::string> mupCat;
+  std::vector<int>     mupCharge;
+  std::vector<int>     mupNPixHits;
+  std::vector<int>     mupNPixLayers;
+  std::vector<int>     mupNTrkHits;
+  std::vector<int>     mupNTrkLayers;
+  std::vector<int>     mupNMuonHits;
+  std::vector<int>     mupNMatchStation;
+  std::vector<float>   mupIso;
+  std::vector<float>   mupIsoPt;
+  std::vector<float>   mupIsodR;
+  std::vector<bool>    mup_isGlobalMuon;
+  std::vector<bool>    mup_isTrackerMuon;
+  std::vector<bool>    mup_StandAloneMuon;
+  std::vector<bool>    mup_isCaloMuon;
+  std::vector<bool>    mup_isPFMuon;
+
+  int         nSC;
+  std::vector<float>  scE;
+  std::vector<float>  scEt;
+  std::vector<float>  scEta;
+  std::vector<float>  scPhi;
+  std::vector<float>  scX;
+  std::vector<float>  scY;
+  std::vector<float>  scZ;
+  std::vector<float>  scEtaWidth;
+  std::vector<float>  scPhiWidth;
+  std::vector<float>  scRawE;
+  std::vector<float>  scRawEt;
+  
+  
+ /* std::vector<double>   muon_pt, muon_eta, muon_phi, mum_dz, muon_dxy;
   std::vector<double>   mum_dz_error, muon_dxy_error;
   std::vector<double>   muon_vx,muon_vy,muon_vz,muon_vertexChi2,muon_vertexNDoF;
 
@@ -140,14 +251,9 @@ class TreeContent
   std::vector<double>  muon_PFIsolationR04_sumPUPt;
   
   std::vector<double> muon_dcaToBS;
-  std::vector<double> muon_dcaToBS_error;
+  std::vector<double> muon_dcaToBS_error;*/
   
- // # Dimuon # // 
-  std::vector<double>   dimuon_pt, dimuon_eta, dimuon_phi, dimuon_energy, dimuon_px,dimuon_py,dimuon_pz;
-  std::vector<double>   dimuon_vx,dimuon_vy,dimuon_vz,dimuon_vertex_chi2,dimuon_vertex_ndof,dimuon_vertex_proba;
-  std::vector<double>   dimuon_invMass,dimuon_dcaMuMu,dimuon_deltaRMuMu,dimuon_ls,dimuon_ls_error,dimuon_cosAlphaBS,dimuon_cosAlphaBS_error;
-  std::vector<int>	dimuon_MuPIdx,dimuon_MuMIdx;
-  std::vector<bool>     dimuon_isGoodVertexFit;
+
   
   // # BeamSpot # //
   double beamspot_x,beamspot_y,beamspot_z,beamspot_x_error,beamspot_y_error,beamspot_z_error;
@@ -166,7 +272,7 @@ class TreeContent
  std::vector<double> gen_BsMuonM_pt,gen_BsMuonM_eta,gen_BsMuonM_phi;
  std::vector<double> gen_BsMuonP_pt,gen_BsMuonP_eta,gen_BsMuonP_phi;
  std::vector<double> gen_BsPhoton_pt,gen_BsPhoton_eta,gen_BsPhoton_phi;
- std::vector<int> gen_BsPhotonMultiplicity,gen_BsMuonMMultiplicity,gen_BsMuonPMultiplicity;
+ std::vector<int> gen_BsPhotonMultiplicity,gen_BsMuonMMultiplicity,gen_BsMuonMPultiplicity;
 
 };
 

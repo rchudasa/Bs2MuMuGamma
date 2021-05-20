@@ -27,11 +27,11 @@
 
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
-
+#include "FWCore/Common/interface/TriggerNames.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
- #include "FWCore/Utilities/interface/InputTag.h"
- #include "DataFormats/TrackReco/interface/Track.h"
- #include "DataFormats/TrackReco/interface/TrackFwd.h"
+#include "FWCore/Utilities/interface/InputTag.h"
+#include "DataFormats/TrackReco/interface/Track.h"
+#include "DataFormats/TrackReco/interface/TrackFwd.h"
 
 
 
@@ -148,7 +148,7 @@ class BsToMuMuGammaNTuplizer : public edm::one::EDAnalyzer<edm::one::SharedResou
 
 
       
-      //edm::EDGetTokenT<edm::TriggerResults>                    triggerBits_;
+      edm::EDGetTokenT<edm::TriggerResults>                    triggerBits_;
       //edm::EDGetTokenT<pat::TriggerObjectStandAloneCollection> triggerObjects_;
       //edm::EDGetTokenT<pat::PackedTriggerPrescales>            triggerPrescales_;
       //std::vector<std::string> trigTable_;
@@ -170,6 +170,9 @@ class BsToMuMuGammaNTuplizer : public edm::one::EDAnalyzer<edm::one::SharedResou
 	 RefCountedKinematicTree mumuVertexFitTree;
 	 
 	 TLorentzVector bsDimuon_lv;
+      
+    // Trigger bookkeeping vars  
+      std::vector<std::string> TriggerNames_;
 };
 
 //
@@ -184,18 +187,17 @@ class BsToMuMuGammaNTuplizer : public edm::one::EDAnalyzer<edm::one::SharedResou
 // constructors and destructor
 //
 BsToMuMuGammaNTuplizer::BsToMuMuGammaNTuplizer(const edm::ParameterSet& iConfig) 
-: muonToken_(consumes<reco::MuonCollection>(iConfig.getParameter<edm::InputTag>("muons")))
+: muonToken_(consumes<reco::MuonCollection>(iConfig.getParameter<edm::InputTag>("muons"))),
+  TriggerNames_(iConfig.getParameter<std::vector<std::string>>("TriggerNames"))
 {
    //now do what ever initialization is needed
  
     beamSpotToken_  	   =consumes<reco::BeamSpot>(iConfig.getParameter<edm::InputTag>("beamSpot"));
     primaryVtxToken_       =consumes<reco::VertexCollection>(iConfig.getParameter<edm::InputTag>("vertices"));
     simGenTocken_          =consumes<reco::GenParticleCollection>(iConfig.getParameter<edm::InputTag>("genParticles"));
-    //trackToken_          =consumes<reco::TrackCollection>             (iConfig.getParameter<edm::InputTag>("tracks"));
-    //triggerBits_         =consumes<edm::TriggerResults>                    (iConfig.getParameter<edm::InputTag>("bits"));
-    //triggerPrescales_    =consumes<pat::PackedTriggerPrescales>            (iConfig.getParameter<edm::InputTag>("prescales"));
-    //trigTable_           =iConfig.getParameter<std::vector<std::string> >("TriggerNames");   
-    //triggerObjects_   (consumes<pat::TriggerObjectStandAloneCollection> (iConfig.getParameter<edm::InputTag>("objects"));
+    triggerBits_           =consumes<edm::TriggerResults>                    (iConfig.getParameter<edm::InputTag>("HLTResult"));
+    //triggerPrescales_      =consumes<pat::PackedTriggerPrescales>            (iConfig.getParameter<edm::InputTag>("prescales"));
+   // triggerObjects_   (consumes<pat::TriggerObjectStandAloneCollection> (iConfig.getParameter<edm::InputTag>("objects"));
     
     //l1Table_           = iConfig.getParameter<std::vector<std::string> >("L1Names");   
     //mcGenToken_        = consumes<reco::GenParticleCollection >(iConfig.getParameter<edm::InputTag>(""));
@@ -218,7 +220,7 @@ BsToMuMuGammaNTuplizer::BsToMuMuGammaNTuplizer(const edm::ParameterSet& iConfig)
     isMC=iConfig.getParameter<bool>("isMC");
     doBsToMuMuGamma=iConfig.getParameter<bool>("doBsToMuMuGamma");
     
-    NTuple = new TreeContent;
+    NTuple = new TreeContent(TriggerNames_);
     Utility= new Utils();
     muonMass= Utility->muonMass;
     muonMassErr= Utility->muonMassErr;
@@ -249,7 +251,41 @@ BsToMuMuGammaNTuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup&
 {
    using namespace edm;
  
-     // Get magnetic field
+    edm::Handle<edm::TriggerResults>     hltTriggerResults;
+    iEvent.getByToken(triggerBits_,      hltTriggerResults);
+ 
+    HLTConfigProvider hltConfig_;
+    if (hltTriggerResults.isValid()) {
+    const edm::TriggerNames& triggerNames_ = iEvent.triggerNames(*hltTriggerResults);
+
+    for (unsigned int itrig = 0; itrig < hltTriggerResults->size(); itrig++){
+//        std::cout<<" i = "<<itrig<<", Name  : "<<triggerNames_.triggerName(itrig)<<" \n";
+
+      // Only consider the triggered case.                                                                                                                          
+      if ((*hltTriggerResults)[itrig].accept() == 1)
+      {
+        std::string triggername = triggerNames_.triggerName(itrig);
+        int triggerprescale = hltConfig_.prescaleValue(itrig, triggername);
+        // Loop over our interested HLT trigger names to find if this event contains.
+        for (unsigned int it=0; it<TriggerNames_.size(); it++){
+          if (triggername.find(TriggerNames_[it]) != std::string::npos) 
+            {
+              // save the no versioned case
+              (NTuple->TrigNames).push_back(TriggerNames_[it]);
+              (NTuple->TrigPrescales).push_back(triggerprescale);
+            }
+         }
+       }
+      }
+   }
+   else
+   {
+	std::cout<<" Trigger result Not valid !!"<<"\n";
+	
+   }
+   NTuple->FillTrggerBranches();
+    
+    // Get magnetic field
     
     edm::ESHandle<MagneticField> bFieldHandle;
     iSetup.get<IdealMagneticFieldRecord>().get(bFieldHandle);      
@@ -324,7 +360,15 @@ BsToMuMuGammaNTuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup&
 		    if(bsDaughter.pdgId() ==  13) muPMul++;
 		    if(bsDaughter.pdgId() ==  22) phoMul++;
 		}
-		if(muMMul!=1 or muPMul!=1 or phoMul!=1 )
+		if(muMMul!=1 or muPMul!=1)
+		{
+			muMMul=0;
+			muPMul=0;
+			phoMul=0;
+			continue;
+		}
+	
+	       if(doBsToMuMuGamma and phoMul!=1)
 		{
 			muMMul=0;
 			muPMul=0;
@@ -338,20 +382,20 @@ BsToMuMuGammaNTuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup&
 		    if(bsDaughter.pdgId() == -13) 
 		    {
 			(NTuple->gen_BsMuonM_pt).push_back(bsDaughter.pt());
-			(NTuple->gen_BsMuonM_eta).push_back(bsDaughter.pt());
-			(NTuple->gen_BsMuonM_phi).push_back(bsDaughter.pt());
+			(NTuple->gen_BsMuonM_eta).push_back(bsDaughter.eta());
+			(NTuple->gen_BsMuonM_phi).push_back(bsDaughter.phi());
 		    }
 		    if(bsDaughter.pdgId() ==  13)
 		    {
 			(NTuple->gen_BsMuonP_pt).push_back(bsDaughter.pt());
-			(NTuple->gen_BsMuonP_eta).push_back(bsDaughter.pt());
-			(NTuple->gen_BsMuonP_phi).push_back(bsDaughter.pt());
+			(NTuple->gen_BsMuonP_eta).push_back(bsDaughter.eta());
+			(NTuple->gen_BsMuonP_phi).push_back(bsDaughter.phi());
 		    }
 		    if(bsDaughter.pdgId() ==  22)
 		    {
 			(NTuple->gen_BsPhoton_pt).push_back(bsDaughter.pt());
-			(NTuple->gen_BsPhoton_eta).push_back(bsDaughter.pt());
-			(NTuple->gen_BsPhoton_phi).push_back(bsDaughter.pt());
+			(NTuple->gen_BsPhoton_eta).push_back(bsDaughter.eta());
+			(NTuple->gen_BsPhoton_phi).push_back(bsDaughter.phi());
 	
 		    }
 		}
@@ -365,7 +409,10 @@ BsToMuMuGammaNTuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup&
 		break;
 	
         }
-	
+	(NTuple->gen_BsMuonMMultiplicity).push_back(muMMul);
+	(NTuple->gen_BsMuonPMultiplicity).push_back(muPMul);
+	(NTuple->gen_BsPhotonMultiplicity).push_back(phoMul);
+
 	bool hasAValidMCCandidate= true;
 	if(muMMul!=1 or muPMul!=1 ) 
 	{
@@ -394,9 +441,8 @@ BsToMuMuGammaNTuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup&
     {
     	 auto &aMuon=muons->at(i);
          
-         if(aMuon.pt()  < pTMinMuons) continue;
+	 if(aMuon.pt()  < pTMinMuons) continue;
 	 aMuonInnerTrack= aMuon.innerTrack();
-         
 	 
 	 (NTuple->muon_pt		      ).push_back(aMuon.pt());
          (NTuple->muon_eta		      ).push_back(aMuon.eta());
